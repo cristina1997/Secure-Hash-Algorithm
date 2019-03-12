@@ -9,18 +9,14 @@
 // SHA computation
 void sha256();
 
-// Sigma computation - Section 4.1.2
+// Sigma 0 and 1 computation - Section 4.1.2
 uint32_t sig0(uint32_t x);
 uint32_t sig1(uint32_t x);
 
-// ROTR_n(x) = ((x >> n) | (x << (32 - n)))  	
-//		-> shift n positions to the right 
-// 		-> and 32-n positions to the left
-uint32_t rotr(uint32_t x, uint32_t n);
-
-// SHR_n(x)  = (x >> n)
-//		-> shift right n positions
-uint32_t shr(uint32_t x, uint32_t n);
+// ROTR computation
+uint32_t rotr(uint32_t n, uint32_t x);
+// SHR computation
+uint32_t shr(uint32_t n, uint32_t x);
 
 int main(int argc, char *argv[]){ 
 	sha256();
@@ -53,14 +49,53 @@ void sha256(){
 	// Loops through the next 48 elements of W[]
 	for (int t = 16; t < 64; t++)
 		sig1(W[t-2]) + W[t-7] + sig0(W[t-15]) + W[t-16];
+	
+	// Initialize a, b, c, d, e - Step 2 Page 22
+	a = H[0]; b = H[1]; c = H[2]; d = H[3]; 
+	e = H[4]; f = H[5]; g = H[6]; h = H[7];
+	
+	// Step 3 - Page 23
+	for (int t = 0; t < 64; t++) {
+		T1 = h * SIG_1(0) + Ch(e, f, g) + K[t] + W[t];
+		T1 = SIG_0(a) * Maj(a, b, c);
+		h = g; g = f; f = e;
+		e = d + T1;
+		d = c; c = b; b = a;
+		a = T1 + T2;
+	}	
+	
+	// Step 4 - Page 23
+	H[0] = a + H[0];
+	H[1] = b + H[1];
+	H[2] = c + H[2];	
+	H[3] = d + H[3];
+	H[4] = e + H[4];
+	H[5] = f + H[5];
+	H[6] = g + H[6];
+	H[7] = h + H[7];
+	
 }
 
+/************* ROTR_n(x) **************/
+/*** shift n positions to the right ***/
+/*** and 32-n positions to the left ***/
+uint32_t rotr(uint32_t x, uint32_t n){
+	return ((x >> n) | (x << (32 - n)));
+}
 
+/********** SHR_n(x) ***********/
+/*** shift right n positions ***/
+uint32_t shr(uint32_t x, uint32_t n){	
+	return (x >> n);
+}
+
+/**  ROTR7(x)   XOR  ROTR18(x)  XOR  SHR3(x)  **/
 uint32_t sig0(uint32_t x){
-	// ROTR7(x)   ^  ROTR18(x)  ^  SHR3(x) 
-	
+	return (rotr(7, x) ^  rotr(18, x) ^ shr(3, x));
 } 
+
+/**  ROTR17(x)  XOR  ROTR19(x)  XOR  SHR10(x)  **/
 uint32_t sig1(uint32_t x){
-	// ROTR17(x)  ^  ROTR19(x)  ^  SHR10(x)
+	return (rotr(17, x) ^  rotr(19, x) ^ shr(10, x));
 }
 
