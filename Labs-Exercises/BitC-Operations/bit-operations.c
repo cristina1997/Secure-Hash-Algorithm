@@ -1,3 +1,6 @@
+// Author: Cristina Nita 2019 - Practical Exercise 3 from Theory of Algorithms Labs
+// Source code adapted from:
+// - https://web.microsoftstream.com/video/c24ff5f4-e5e1-4747-af8d-c2c4892856e3
 #include <stdio.h>
 #include <stdint.h>
 
