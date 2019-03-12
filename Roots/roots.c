@@ -1,7 +1,11 @@
+// Author: Cristina Nita 2019 - Practical Exercise 2 from Theory of Algorithms Labs
+// Source code adapted from:
+// - https://web.microsoftstream.com/video/e5e7f5d8-3d2f-4115-9eaa-d9b1d6a91c4e
 #include <stdio.h>
 #include <math.h>
 #include <stdint.h>
 
+// unsigned int array of prime numbers
 unsigned int primes[] = {
    2,  3,   5,   7,   11,  13,  17,  19,  23,  29, 
    31, 37,  41,  43,  47,  53,  59,  61,  67,  71, 
@@ -14,20 +18,21 @@ unsigned int primes[] = {
 
 int main(int args, char *argv[]){
   
+   // variables
   long double fraction;
   long double cuberoot;
   long double multiplyFraction;
        
   for (int i = 0; i < 64; i++){ 
-    cuberoot = cbrtl((long double) primes[i]);
-    fraction = cuberoot - floor(cuberoot);
-    multiplyFraction = fraction * powl(2, 32);
-    multiplyFraction = floorl(multiplyFraction);
+    cuberoot = cbrtl((long double) primes[i]);     // gets the long double cube root of the prime numbers in the primes array
+    fraction = cuberoot - floor(cuberoot);         // the decimal points part of the cuberoot
+    multiplyFraction = fraction * powl(2, 32);     // make the fractional part of the cube root a 32 bits numbers
+                                                   // **can also use "0x100000000" instead of "pow(2, 32)**
+    multiplyFraction = floorl(multiplyFraction);   // get rid of everything after the decimal point
 
     printf("%3d -> %Lf -> %Lf -> %08x\n", primes[i], cuberoot, fraction, (uint32_t)multiplyFraction);
 
   }
-
   
   return 0;
 }
