@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
+// it convers numbers from hexadecimal values to binary values
 void binprint(uint_32_t x){
 	uint_32_t one = 1;
 	
@@ -16,10 +17,16 @@ void binprint(uint_32_t x){
 	
 }
 
+// ROTL_n(x) 
+//	-> shift n positions to the left 
+//	-> and 32-n positions to the right
 uint_32_t rotl(uint_32_t x, int n){
 	return ((x << n) | (x >> (32 - n)));
 }
 
+// ROTR_n(x) 
+//	-> shift n positions to the right 
+//	-> and 32-n positions to the left
 uint_32_t rotr(uint_32_t x, int n){
 	return ((x >> n) | (x << (32 - n)));
 }
@@ -29,28 +36,28 @@ int main (int argc, char *argv[]){
 	uint_32_t a = 1;
 	uint_32_t b = 2;
 	
-	// Hex
-	printf(" a: %08x\n", a);	
-	printf(" b: %08x\n", b);	
+	// Values printed as hexadecimal numbers
+	printf(" a: %08x\n", a); 		// value of a as hexadecimal numbers
+	printf(" b: %08x\n", b);		// value of b as hexadecimal numbers
 	
-	printf(" &: %08x\n", (a&b));	
-	printf(" |: %08x\n", (a|b));
-	printf(" ^: %08x\n", (a^b));	
-	printf(" ~: %08x\n", (~a));	
-	printf(" <<: %08x\n", (a<<1));	
-	printf(" >>: %08x\n", (a>>1));
+	printf(" &: %08x\n", (a&b));		// a AND b
+	printf(" |: %08x\n", (a|b));		// a OR b
+	printf(" ^: %08x\n", (a^b));		// a XOR b
+	printf(" ~: %08x\n", (~a));		// NOT a
+	printf(" <<: %08x\n", (a<<1));		// shifts a 1 position to the left
+	printf(" >>: %08x\n", (a>>1));		// shifts a 1 position to the right
 	
 	
-	// Binary
-	printf("\n a: "); binprint(a);
-	printf("\n b: "); binprint(b);
+	// Values printed as binary numbers
+	printf("\n a: "); binprint(a); 		// value of a as binary numbers
+	printf("\n b: "); binprint(b); 		// value of b as binary numbers
 	
-	printf("\n &: "); binprint(a&b);
-	printf("\n |: "); binprint(a|b);
-	printf("\n ^: "); binprint(a^b);
-	printf("\n ~: "); binprint(~a);
-	printf("\n <<: "); binprint(a<<1);
-	printf("\n >>: "); binprint(a>>1);
+	printf("\n &: "); binprint(a&b);	// a AND b
+	printf("\n |: "); binprint(a|b);	// a OR b
+	printf("\n ^: "); binprint(a^b);	// a XOR b
+	printf("\n ~: "); binprint(~a);		// NOT a
+	printf("\n <<: "); binprint(a<<1);	// shifts a 1 position to the left
+	printf("\n >>: "); binprint(a>>1);	// shifts a 1 position to the right
 	
 	return 0	
 }
