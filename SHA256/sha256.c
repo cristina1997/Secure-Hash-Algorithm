@@ -77,8 +77,8 @@ uint32_t rotr(uint32_t x, uint32_t n){
 	return ((x >> n) | (x << (32 - n)));
 }
 
-/********** SHR_n(x) ***********/
-/*** shift right n positions ***/
+/*************** SHR_n(x) **************/
+/*** shift n positions to the right ***/
 uint32_t shr(uint32_t x, uint32_t n){	
 	return (x >> n);
 }
