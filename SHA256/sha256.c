@@ -22,8 +22,8 @@ uint32_t shr(uint32_t n, uint32_t x);
 
 
 // SHA-256 Functions - Section 4.1.2
-uint32_t SIG_0(uint32_t X);
-uint32_t SIG_1(uint32_t X);
+uint32_t SIG_0(uint32_t x);
+uint32_t SIG_1(uint32_t x);
 uint32_t Ch(uint32_t x, uint32_t y, uint32_t z);
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);
 
@@ -50,7 +50,7 @@ void sha256(){
 	};
 
 	// Constant for the hash computation - 
-	uint32_t K[64] = {
+	uint32_t K[] = {
 		0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 
 		0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 
 		0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 
@@ -67,9 +67,9 @@ void sha256(){
 		0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 
 		0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 
 		0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
-	}
+	};
 
-	uint32_t M[16];				// Message block
+	uint32_t M[16] = {0, 0, 0, 0, 0, 0, 0, 0};				// Message block
 
 	// Hash Computation - Section 6.4.2
 	// Loops through the first 16 elements of W[] - Step 1 Page 24
@@ -103,6 +103,10 @@ void sha256(){
 	H[5] = f + H[5];
 	H[6] = g + H[6];
 	H[7] = h + H[7];
+
+  for (int i = 0; i < 8; i++) {
+    printf("%x \n", H[i]);
+  }
 	
 }
 
@@ -129,11 +133,11 @@ uint32_t sig1(uint32_t x){
 	return (rotr(17, x) ^  rotr(19, x) ^ shr(10, x));
 }
 
-uint32_t SIG_0(uint32_t X){
+uint32_t SIG_0(uint32_t x){
 	return rotr(2, x) ^ rotr(13, x) ^ rotr(22, x);
 }
 
-uint32_t SIG_1(uint32_t X){
+uint32_t SIG_1(uint32_t x){
 	return rotr(6, x) ^ rotr(11, x) ^ rotr(25, x);;
 }
 
@@ -144,5 +148,3 @@ uint32_t Ch(uint32_t x, uint32_t y, uint32_t z){
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z){
 	return (x & y) ^ (x & z) ^ (y & z);
 }
-
-
