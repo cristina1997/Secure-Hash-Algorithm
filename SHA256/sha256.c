@@ -71,38 +71,43 @@ void sha256(){
 
 	uint32_t M[16] = {0, 0, 0, 0, 0, 0, 0, 0};				// Message block
 
-	// Hash Computation - Section 6.4.2
-	// Loops through the first 16 elements of W[] - Step 1 Page 24
-	for (int t = 0; t < 16; t++)
-		W[t] = M[t];
+	// Loop through message blocks as per page 22
+	for (i = 0; i < 1; i++){
+		
+		// Hash Computation - Section 6.4.2
+		// Loops through the first 16 elements of W[] - Step 1 Page 24
+		for (int t = 0; t < 16; t++)
+			W[t] = M[t];
 
-	// Loops through the next 48 elements of W[] - Step 1 Page 24
-	for (int t = 16; t < 64; t++)
-		W[t] = sig1(W[t-2]) + W[t-7] + sig0(W[t-15]) + W[t-16];
+		// Loops through the next 48 elements of W[] - Step 1 Page 24
+		for (int t = 16; t < 64; t++)
+			W[t] = sig1(W[t-2]) + W[t-7] + sig0(W[t-15]) + W[t-16];
+		
+		// Initialize a, b, c, d, e - Step 2 Page 22
+		a = H[0]; b = H[1]; c = H[2]; d = H[3]; 
+		e = H[4]; f = H[5]; g = H[6]; h = H[7];
+		
+		// Step 3 - Page 23
+		for (int t = 0; t < 64; t++) {
+			T1 = h * SIG_1(e) + Ch(e, f, g) + K[t] + W[t];
+			T1 = SIG_0(a) * Maj(a, b, c);
+			h = g; g = f; f = e;
+			e = d + T1;
+			d = c; c = b; b = a;
+			a = T1 + T2;
+		}	
+		
+		// Step 4 - Page 23
+		H[0] = a + H[0];
+		H[1] = b + H[1];
+		H[2] = c + H[2];	
+		H[3] = d + H[3];
+		H[4] = e + H[4];
+		H[5] = f + H[5];
+		H[6] = g + H[6];
+		H[7] = h + H[7];
+	}
 	
-	// Initialize a, b, c, d, e - Step 2 Page 22
-	a = H[0]; b = H[1]; c = H[2]; d = H[3]; 
-	e = H[4]; f = H[5]; g = H[6]; h = H[7];
-	
-	// Step 3 - Page 23
-	for (int t = 0; t < 64; t++) {
-		T1 = h * SIG_1(e) + Ch(e, f, g) + K[t] + W[t];
-		T1 = SIG_0(a) * Maj(a, b, c);
-		h = g; g = f; f = e;
-		e = d + T1;
-		d = c; c = b; b = a;
-		a = T1 + T2;
-	}	
-	
-	// Step 4 - Page 23
-	H[0] = a + H[0];
-	H[1] = b + H[1];
-	H[2] = c + H[2];	
-	H[3] = d + H[3];
-	H[4] = e + H[4];
-	H[5] = f + H[5];
-	H[6] = g + H[6];
-	H[7] = h + H[7];
 
   for (int i = 0; i < 8; i++) {
     printf("%x \n", H[i]);
