@@ -1,10 +1,12 @@
-// Cristina Nita, 2019 - SHA Project
-// Secure Hash Algorithm, 256 bit version (SHA256)
-// - https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977
-// Source code adapted from: 
-// - https://web.microsoftstream.com/video/db7c03be-5902-4575-9629-34d176ff1366
+/* Cristina Nita, 2019 - SHA Project
+** Secure Hash Algorithm, 256 bit version (SHA256)
+** - https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977
+** Source code adapted from: 
+** - https://web.microsoftstream.com/video/db7c03be-5902-4575-9629-34d176ff1366
+*/
 #include <stdio.h>
 #include <stdint.h>
+#include <stddef.h>
 
 // SHA computation
 void sha256();
@@ -65,8 +67,14 @@ void sha256(){
 	}	
 	
 	// Step 4 - Page 23
-	H[0] = a + H[0]; H[1] = b + H[1]; H[2] = c + H[2]; H[3] = d + H[3];
-	H[4] = e + H[4]; H[5] = f + H[5]; H[6] = g + H[6]; H[7] = h + H[7];
+	H[0] = a + H[0];
+	H[1] = b + H[1];
+	H[2] = c + H[2];	
+	H[3] = d + H[3];
+	H[4] = e + H[4];
+	H[5] = f + H[5];
+	H[6] = g + H[6];
+	H[7] = h + H[7];
 	
 }
 
@@ -77,8 +85,8 @@ uint32_t rotr(uint32_t x, uint32_t n){
 	return ((x >> n) | (x << (32 - n)));
 }
 
-/*************** SHR_n(x) **************/
-/*** shift n positions to the right ***/
+/********** SHR_n(x) ***********/
+/*** shift right n positions ***/
 uint32_t shr(uint32_t x, uint32_t n){	
 	return (x >> n);
 }
