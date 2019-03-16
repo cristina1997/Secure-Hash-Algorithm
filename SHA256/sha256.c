@@ -21,7 +21,7 @@ uint32_t rotr(uint32_t n, uint32_t x);
 uint32_t shr(uint32_t n, uint32_t x);
 
 
-// SHA-256 Functions
+// SHA-256 Functions - Section 4.1.2
 uint32_t SIG_0(uint32_t X);
 uint32_t SIG_1(uint32_t X);
 uint32_t Ch(uint32_t x, uint32_t y, uint32_t z);
@@ -109,19 +109,19 @@ uint32_t sig1(uint32_t x){
 }
 
 uint32_t SIG_0(uint32_t X){
-
+	return rotr(2, x) ^ rotr(13, x) ^ rotr(22, x);
 }
 
 uint32_t SIG_1(uint32_t X){
-
+	return rotr(6, x) ^ rotr(11, x) ^ rotr(25, x);;
 }
 
 uint32_t Ch(uint32_t x, uint32_t y, uint32_t z){
-
+	return (x & y) ^ ((!x) & z);
 }
 
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z){
-
+	return (x & y) ^ (x & z) ^ (y & z);
 }
 
 
