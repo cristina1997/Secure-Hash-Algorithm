@@ -29,9 +29,10 @@ union msgBlock{
 };
 
 int main(int argc, char *argv[]){ 
-  FILE* fp = fopen(argv[1], "r"); // do some error checking
-  union msgBlock M;
-  uint64_t numBytes;
+  FILE* fp = fopen(argv[1], "r"); // reads a file
+  union msgBlock M;               // initialization of union message block
+  uint64_t numBytes;              // number of bytes -> number between 0 - 64
+  uint64_t numBits = 0;           // number of bits  -> all bits read
 
   /* fopen returns 0, the NULL pointer, on failure */
   /* Source code
@@ -41,13 +42,28 @@ int main(int argc, char *argv[]){
   {
     printf( "Could not open file\n" );
   } 
-  else {    
+  else {
 
     while (!feof(fp)) {
       numBytes = fread(M.e, 1, 64, fp);
-      printf("%llu\n", numBytes);
-    }
+      numBits = numBits + (NumBytes * 8);
+      
+      if (numBytes <= 64-9) {
+        printf("Block with less than 56 bytes! \n");
+        // M.e[numBytes] = 0x01;  // right most position
+        M.e[numBytes] = 0x80;     // left most position
+        
+        while (numBytes <= 64-9 ){
+          numBytes += 1;
+          M.e[numBytes] = 0x00; // add k amount of 0's before appending
+        } // while
+        M.s[7] = numbits;
+
+      } // if
+
+    } // while
+
     fclose(fp);
-  }
+  } // if.. else
 	return 0;
 }
