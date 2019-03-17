@@ -84,11 +84,23 @@ int main(int argc, char *argv[]){
 
         } // while
 
+        /* PAD0 - first bit is 0
+        ** PAD1 - first bit is 1
+        */
+        if (S == PAD0 || S == PAD1) {
+            for (int i = 0; i <= 64-9)              // leaves 8 bytes at the end for the 64 bit integer
+                M.e[i] = 0x00;                      // padding the 448 bits with 0s
+            M.s[7] = numBits;                       
+        } // if
+
+        if (S == PAD1) {
+            M.e[0] = 0x80;
+        } // if
         fclose(fp);
 
-        for (int i = 0; i < 65; i++) {
+        for (int i = 0; i <= 64; i++) {
             printf("%x ", M.e[i]);
-        }
+        } // for loop
 
         printf("\n");
     } // if.. else
