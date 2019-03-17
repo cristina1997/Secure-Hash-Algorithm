@@ -14,22 +14,40 @@
 #include <stdint.h>
 #include <stddef.h>
 
-int main(int argc, char *argv[]){ 
-	FILE* fp = fopen(argv[1], "r"); // do some error checking
-    char c;
-    /* fopen returns 0, the NULL pointer, on failure */
-    /* Source code
-    ** - https://stackoverflow.com/questions/9449295/opening-a-fp-from-command-line-arguments-in-c
-    */
-    if (fp == 0 )
-    {
-        printf( "Could not open file\n" );
-    }
-    else
-    {
-        printf("%c\n", fread(&c, 1, 1, f));
+/* In this case the union is used 
+** to read file in blocks of 512 bits.
+** Unions are like structures (structs)
+** but can only store one value at a time,
+** everything is stored in the same location.
+** Only used in variables related to each other
+** that might have different types.
+*/
+union msgBlock{
+  uint8_t e[64];  // 8  bits(type) * 64 = 512
+  uint32_t t[16]; // 32 bits(type) * 16 = 512
+  uint64_t s[8];  // 64 bits(type) * 8  = 512
+};
 
-        fclose(fp);
+int main(int argc, char *argv[]){ 
+  FILE* fp = fopen(argv[1], "r"); // do some error checking
+  union msgBlock M;
+  uint64_t numBytes;
+
+  /* fopen returns 0, the NULL pointer, on failure */
+  /* Source code
+  ** - https://stackoverflow.com/questions/9449295/opening-a-fp-from-command-line-arguments-in-c
+  */
+  if (fp == 0 )
+  {
+    printf( "Could not open file\n" );
+  } 
+  else {    
+
+    while (!feof(fp)) {
+      numBytes = fread(M.e, 1, 64, fp);
+      printf("%llu\n", numBytes);
     }
+    fclose(fp);
+  }
 	return 0;
 }
