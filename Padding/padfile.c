@@ -50,7 +50,7 @@ int main(int argc, char *argv[]){
       // printf("Bytes: %2llu\n", numBytes);  // shows the number of bytes with padding
 
       if (numBytes <= 64-9) {
-        printf("Block with less than 56 bytes! \n");
+        printf("Block with less than 55 bytes! \n");
         // M.e[numBytes] = 0x01;          // right most position
         M.e[numBytes] = 0x80;             // left most position
         
