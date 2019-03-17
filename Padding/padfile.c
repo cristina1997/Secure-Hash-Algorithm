@@ -1,4 +1,4 @@
-/* Cristina Nita, 2019 - SHA Project - Padding
+/*  Cristina Nita, 2019 - SHA Project - Padding
 ** Secure Hash Algorithm, 256 bit version (SHA256)
 ** - https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977
 ** Source code adapted from
@@ -33,7 +33,7 @@ union msgBlock{
 ** PAD1     = 2
 ** FINISH   = 3
 */
-enum status (READ, PAD0, PAD1, FINISH);             // status of file read
+enum status {READ, PAD0, PAD1, FINISH};             // status of file read
 
 int main(int argc, char *argv[]){ 
     FILE* fp = fopen(argv[1], "r");                 // reads a file
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
                     numBytes += 1;
                     M.e[numBytes] = 0x00;           // padd with 0s
                 } // while
-            } else if (feof(f)) {
+            } else if (feof(fp)) {
                 S = PAD1;
             } // if.. else if
 
