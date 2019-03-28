@@ -55,7 +55,7 @@ enum status {
 **/
 // SHA computation
 void sha256();
-int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int numBits);
+int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits);
 
 // Sigma 0 and 1 computation - Section 4.1.2
 uint32_t sig0(uint32_t x);
@@ -74,13 +74,13 @@ uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);
 
 int main(int argc, char *argv []){ 
 
-    FILE* fp = fopen(argv [1], "r");		// reads a file
+  FILE *fp = fopen(argv [1], "r");		// reads a file
 	
 	sha256(fp);
 	return 0;
 }    
 
-int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int numBits){ 
+int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){ 
    uint64_t numBytes;						// number of bytes -> between 0 - 64
 
 	// All message blocks are finished
@@ -100,7 +100,7 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int numBits){
 		for (int i = 0; i <= 64-9; i++)			// leaves 8 bytes at the end for the 64 bit integer
 			M -> e [i] = 0x00;				// padding the 448 bits with 0s
 
-		M -> s [7] = &numBits;       
+		M -> s [7] = *numBits;       
 		*S = FINISH;
 
 		
@@ -119,10 +119,10 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int numBits){
   	** Source code
     ** - https://stackoverflow.com/questions/9449295/opening-a-fp-from-command-line-arguments-in-c
     */
-    if (fp == 0)
+/*    if (fp == NULL)
     {
         printf("No file to be open mentioned.\n");
-    } else {
+    } else { */     
 
         while (*S == READ) {
             numBytes = fread(M -> e, 1, 64, fp);
@@ -138,9 +138,9 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int numBits){
 
                 while (numBytes <= 64-9){
                     numBytes += 1;
-                    M->e [numBytes] = 0x00;             // add k amount of 0s before appending
+                    M -> e [numBytes] = 0x00;             // add k amount of 0s before appending
                 } // while
-                M -> s [7] = &numBits;
+                M -> s [7] = *numBits;
                 *S = FINISH;
 
             } else if (numBytes < 64) {
@@ -163,7 +163,7 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int numBits){
         if (*S == PAD0 || *S == PAD1) {
             for (int i = 0; i <= 64-9; i++)              // leaves 8 bytes at the end for the 64 bit integer
                 M -> e [i] = 0x00;                      // padding the 448 bits with 0s
-            M -> s [7] = &numBits;                       
+            M -> s [7] = *numBits;                       
         } // if
 
         if (*S == PAD1) {
@@ -176,7 +176,7 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int numBits){
         } // for loop
 
         printf("\n");
-    } // if.. else
+    // } // if.. else
     return 0;
 }
 
@@ -261,7 +261,7 @@ void sha256(fp){
 	}
 	
 
-  for (int i = 0; i < 8; i++) {
+i  for (int i = 0; i < 8; i++) {
     printf("%x \n", H [i]);
   }
 	
