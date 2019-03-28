@@ -2,15 +2,60 @@
 ** Secure Hash Algorithm, 256 bit version (SHA256)
 ** - https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977
 ** Source code adapted from
-** - https://web.microsoftstream.com/video/db7c03be-5902-4575-9629-34d176ff1366
-** - https://web.microsoftstream.com/video/2a86a2ac-aafb-46e0-a278-a3faa1d13cbf
+** - SHA-256 Algorithm
+** 		* Part 1:
+** 			https://web.microsoftstream.com/video/db7c03be-5902-4575-9629-34d176ff1366
+** 		* Part 2:
+** 			https://web.microsoftstream.com/video/2a86a2ac-aafb-46e0-a278-a3faa1d13cbf
+** - Unions:
+**      * https://web.microsoftstream.com/video/78dc0c8d-a017-48c8-99da-0714866f35cb
+** - Padding:
+**      * https://web.microsoftstream.com/video/9daaf80b-9c4c-4fdc-9ef6-159e0e4ccc13
+** - Error Fixing:
+**      * https://web.microsoftstream.com/video/200e71ec-1dc1-47a4-9de8-6f58781e3f38
+** - Pointers:
+** 		* https://web.microsoftstream.com/video/f823809a-d8df-4e12-b243-e1f8ed76b93f
 */
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 
+
+/* Union
+** - represents a message block
+** - used to read file in blocks of 512 bits
+** - like structures (structs)
+** - can only store one value at a time
+** - stored in the same location.
+** - used in variables related to each other
+**   that might have different types.
+*/
+union msgBlock{
+    uint8_t e [64];                                    // 8  bits(type) * 64 = 512
+    uint32_t t [16];                                   // 32 bits(type) * 16 = 512
+    uint64_t s [8];                                    // 64 bits(type) * 8  = 512
+};
+
+/* Flag for File Read
+** - READ     = 0
+** - PAD0     = 1
+** - PAD1     = 2
+** - FINISH   = 3
+*/
+enum status {
+	READ, 
+	PAD0, 
+	PAD1, 
+	FINISH
+};             
+
+
+/** 
+***	Declaration of methods
+**/
 // SHA computation
 void sha256();
+int nextMsgBlock(FILE *f, union msgBlock, enum status, int *numBits);
 
 // Sigma 0 and 1 computation - Section 4.1.2
 uint32_t sig0(uint32_t x);
@@ -19,27 +64,129 @@ uint32_t sig1(uint32_t x);
 // ROTR computation
 uint32_t rotr(uint32_t n, uint32_t x);
 // SHR computation
-uint32_t shr(uint32_t n, uint32_t x);
-
+uint32_t shr(uint32_t n, uint32_t x);+
 
 // SHA-256 Functions - Section 4.1.2
 uint32_t SIG_0(uint32_t x);
 uint32_t SIG_1(uint32_t x);
 uint32_t Ch(uint32_t x, uint32_t y, uint32_t z);
-uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);
+uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);     
 
-int main(int argc, char *argv[]){ 
-	sha256();
+int main(int argc, char *argv []){ 
+
+    FILE* fp = fopen(argv [1], "r");		// reads a file
+	
+	sha256(fp);
 	return 0;
+}    
+
+int nextMsgBlock(FILE *f, union msgBlock *m, enum status, int *numBits){ 
+   uint64_t numBytes;						// number of bytes -> between 0 - 64
+
+	// All message blocks are finished
+	if (*S == FINISH){
+		return 0;
+	}
+	
+	/* Is a block full of padding needed?
+	** if yes, set first 56 bytes to 0 bits
+	** and the last 64 bits to no of bits in the file
+	** and tell S we are finished.
+	** PAD0 - first bit is 0
+	** PAD1 - first bit is 1
+	*/
+	if (S == PAD0 || S == PAD1) {
+		for (int i = 0; i <= 64-9)			// leaves 8 bytes at the end for the 64 bit integer
+			M.e [i] = 0x00;					// padding the 448 bits with 0s
+
+		M.s [7] = numBits;       
+		*S = FINISH;               
+	} // if
+
+	if (S == PAD1) {
+		M.e [0] = 0x80;
+	} // if
+
+
+    /* If no file to be opened is mentioned
+	** let the user know that no file was mentioned.
+	** Source code
+    ** - https://stackoverflow.com/questions/9449295/opening-a-fp-from-command-line-arguments-in-c
+    */
+    if (fp == 0)
+    {
+        printf("No file to be open mentioned.\n");
+    } else {
+
+        while (S == READ) {
+            numBytes = fread(M.e, 1, 64, fp);
+            numBits += numBytes * 8;      
+            // printf("Bytes: %2llu\n", numBytes);  // shows the number of bytes with padding
+
+            if (numBytes <= 64-9) {
+                printf("Block with less than 55 bytes! \n");
+                // M.e [numBytes] = 0x01;            // first byte in M that hasn't been overriden
+                                                    // -> right most position
+                M.e [numBytes] = 0x80;               // first byte in M that hasn't been overriden
+                                                    // -> left most position
+
+                while (numBytes <= 64-9){
+                    numBytes += 1;
+                    M.e [numBytes] = 0x00;             // add k amount of 0s before appending
+                } // while
+                M.s [7] = numBits;
+                S = FINISH;
+
+            } else if (numBytes < 64) {
+                S = PAD0;                           // it aknowledges a message block containing all 0s is needed
+                M.e [numBytes] = 0x80;
+
+                while (numBytes < 64) {
+                    numBytes += 1;
+                    M.e [numBytes] = 0x00;           // padd with 0s
+                } // while
+            } else if (feof(fp)) {
+                S = PAD1;
+            } // if.. else if
+
+        } // while
+
+        /* PAD0 - first bit is 0
+        ** PAD1 - first bit is 1
+        */
+        if (S == PAD0 || S == PAD1) {
+            for (int i = 0; i <= 64-9)              // leaves 8 bytes at the end for the 64 bit integer
+                M.e [i] = 0x00;                      // padding the 448 bits with 0s
+            M.s [7] = numBits;                       
+        } // if
+
+        if (S == PAD1) {
+            M.e [0] = 0x80;
+        } // if
+        fclose(fp);
+
+        for (int i = 0; i <= 64; i++) {
+            printf("%x ", M.e [i]);
+        } // for loop
+
+        printf("\n");
+    } // if.. else
+    return 0;
 }
 
-void sha256(){
-	uint32_t W[64]; 			// Message schedule - 64 bit words
-	uint32_t a, b, c, d, e, f, g, h; 	// Working variables
-	uint32_t T1, T2;			// Temporary variables 
+void sha256(fp){
+	// SHA Calculation variables
+	uint32_t W [64];						// Message schedule - 64 bit words
+	uint32_t a, b, c, d, e, f, g, h;		// Working variables
+	uint32_t T1, T2;						// Temporary variables 
+	
+	// Padding Calculation variables
+	union msgBlock M;						// current message block
+    enum status S = READ;					// message blocks status
+    uint64_t numBits = 0;					// number of bits read
 
 	// Hash Value - Section 5.3.3
-	uint32_t H[8] = {
+	uint32_t H [8] = {
 		0x6a09e667, 
 		0xbb67ae85, 
 		0x3c6ef372, 
@@ -50,8 +197,8 @@ void sha256(){
 		0x5be0cd19		
 	};
 
-	// Constant for the hash computation - 
-	uint32_t K[] = {
+	// Constant for the hash computation - Section 4.2.2
+	uint32_t K [] = {
 		0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 
 		0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 
 		0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 
@@ -70,27 +217,25 @@ void sha256(){
 		0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 	};
 
-	uint32_t M[16] = {0, 0, 0, 0, 0, 0, 0, 0};				// Message block
-
 	// Loop through message blocks as per page 22
-	for (i = 0; i < 1; i++){
+	while (nextMsgBlock(fp, M, S, numBits)){
 		
 		// Hash Computation - Section 6.4.2
-		// Loops through the first 16 elements of W[] - Step 1 Page 24
-		for (int t = 0; t < 16; t++)
-			W[t] = M[t];
+		// Loops through the first 16 elements of W [] - Step 1 Page 24
+		for (int i = 0; i < 16; i++)
+			W  [i] = M.t  [i];
 
-		// Loops through the next 48 elements of W[] - Step 1 Page 24
-		for (int t = 16; t < 64; t++)
-			W[t] = sig1(W[t-2]) + W[t-7] + sig0(W[t-15]) + W[t-16];
+		// Loops through the next 48 elements of W [] - Step 1 Page 24
+		for (int i = 16; i < 64; i++)
+			W  [i] = sig1(W [i-2]) + W [i-7] + sig0(W [i-15]) + W [i-16];
 		
 		// Initialize a, b, c, d, e - Step 2 Page 22
-		a = H[0]; b = H[1]; c = H[2]; d = H[3]; 
-		e = H[4]; f = H[5]; g = H[6]; h = H[7];
+		a = H [0]; b = H [1]; c = H [2]; d = H [3]; 
+		e = H [4]; f = H [5]; g = H [6]; h = H [7];
 		
 		// Step 3 - Page 23
-		for (int t = 0; t < 64; t++) {
-			T1 = h * SIG_1(e) + Ch(e, f, g) + K[t] + W[t];
+		for (int i = 0; i < 64; i++) {
+			T1 = h * SIG_1(e) + Ch(e, f, g) + K  [i] + W  [i];
 			T1 = SIG_0(a) * Maj(a, b, c);
 			h = g; g = f; f = e;
 			e = d + T1;
@@ -99,19 +244,19 @@ void sha256(){
 		}	
 		
 		// Step 4 - Page 23
-		H[0] = a + H[0];
-		H[1] = b + H[1];
-		H[2] = c + H[2];	
-		H[3] = d + H[3];
-		H[4] = e + H[4];
-		H[5] = f + H[5];
-		H[6] = g + H[6];
-		H[7] = h + H[7];
+		H [0] = a + H [0];
+		H [1] = b + H [1];
+		H [2] = c + H [2];	
+		H [3] = d + H [3];
+		H [4] = e + H [4];
+		H [5] = f + H [5];
+		H [6] = g + H [6];
+		H [7] = h + H [7];
 	}
 	
 
   for (int i = 0; i < 8; i++) {
-    printf("%x \n", H[i]);
+    printf("%x \n", H [i]);
   }
 	
 }

@@ -14,13 +14,14 @@
 #include <stdint.h>
 #include <stddef.h>
 
-/* In this case the union is used 
-** to read file in blocks of 512 bits.
-** Unions are like structures (structs)
-** but can only store one value at a time,
-** everything is stored in the same location.
-** Only used in variables related to each other
-** that might have different types.
+/* Union
+** - represents a message block
+** - used to read file in blocks of 512 bits
+** - like structures (structs)
+** - can only store one value at a time
+** - stored in the same location.
+** - used in variables related to each other
+**   that might have different types.
 */
 union msgBlock{
     uint8_t e[64];                                    // 8  bits(type) * 64 = 512
@@ -35,7 +36,7 @@ union msgBlock{
 */
 enum status {READ, PAD0, PAD1, FINISH};             // status of file read
 
-int main(int argc, char *argv[]){ 
+int nextMsgBlock(int argc, char *argv[]){ 
     FILE* fp = fopen(argv[1], "r");                 // reads a file
     union msgBlock M;                               // initialization of union message block
     uint64_t numBytes;                              // number of bytes -> number between 0 - 64
