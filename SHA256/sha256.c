@@ -55,7 +55,7 @@ enum status {
 **/
 // SHA computation
 void sha256();
-int nextMsgBlock(FILE *f, union msgBlock, enum status, int *numBits);
+int nextMsgBlock(FILE *f, union msgBlock *M, enum status, int *numBits);
 
 // Sigma 0 and 1 computation - Section 4.1.2
 uint32_t sig0(uint32_t x);
@@ -64,7 +64,7 @@ uint32_t sig1(uint32_t x);
 // ROTR computation
 uint32_t rotr(uint32_t n, uint32_t x);
 // SHR computation
-uint32_t shr(uint32_t n, uint32_t x);+
+uint32_t shr(uint32_t n, uint32_t x);
 
 // SHA-256 Functions - Section 4.1.2
 uint32_t SIG_0(uint32_t x);
@@ -80,7 +80,7 @@ int main(int argc, char *argv []){
 	return 0;
 }    
 
-int nextMsgBlock(FILE *f, union msgBlock *m, enum status, int *numBits){ 
+int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){ 
    uint64_t numBytes;						// number of bytes -> between 0 - 64
 
 	// All message blocks are finished
@@ -88,23 +88,29 @@ int nextMsgBlock(FILE *f, union msgBlock *m, enum status, int *numBits){
 		return 0;
 	}
 	
-	/* Is a block full of padding needed?
-	** if yes, set first 56 bytes to 0 bits
-	** and the last 64 bits to no of bits in the file
+	/* If a block full of padding is needed 
+	** then set first 56 bytes to 0 bits
+	** set the last 64 bits to the no. of bits in the file
 	** and tell S we are finished.
-	** PAD0 - first bit is 0
-	** PAD1 - first bit is 1
+	** If S was PAD1 then set the first bit of M to 1.
+	** - PAD0 - first bit is 0
+	** - PAD1 - first bit is 1
 	*/
 	if (S == PAD0 || S == PAD1) {
 		for (int i = 0; i <= 64-9)			// leaves 8 bytes at the end for the 64 bit integer
-			M.e [i] = 0x00;					// padding the 448 bits with 0s
+			M -> e [i] = 0x00;				// padding the 448 bits with 0s
 
-		M.s [7] = numBits;       
-		*S = FINISH;               
+		M -> s [7] = numBits;       
+		*S = FINISH;
+
+		
+		if (S == PAD1) {
+			M -> e [0] = 0x80;  
+
+		return 1;           
 	} // if
 
-	if (S == PAD1) {
-		M.e [0] = 0x80;
+
 	} // if
 
 
@@ -155,7 +161,7 @@ int nextMsgBlock(FILE *f, union msgBlock *m, enum status, int *numBits){
         ** PAD1 - first bit is 1
         */
         if (S == PAD0 || S == PAD1) {
-            for (int i = 0; i <= 64-9)              // leaves 8 bytes at the end for the 64 bit integer
+            for (int i = 0; i <= 64-9; i++)              // leaves 8 bytes at the end for the 64 bit integer
                 M.e [i] = 0x00;                      // padding the 448 bits with 0s
             M.s [7] = numBits;                       
         } // if
