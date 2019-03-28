@@ -54,7 +54,7 @@ enum status {
 ***	Declaration of methods
 **/
 // SHA computation
-void sha256();
+void sha256(FILE *fp);
 int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits);
 
 // Sigma 0 and 1 computation - Section 4.1.2
@@ -74,7 +74,8 @@ uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);
 
 int main(int argc, char *argv []){ 
 
-	FILE *fp = fopen(argv [1], "r");		// reads a file
+	FILE *fp;
+  fp  = fopen(argv [1], "r");		// reads a file
 		
  	/* If no file to be opened is mentioned
 	** let the user know that no file was mentioned.
@@ -161,7 +162,7 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){
 	
 } // int nextMsgBlock() method
 
-void sha256(fp){
+void sha256(FILE *fp){
 	// SHA Calculation variables
 	uint32_t W [64];						// Message schedule - 64 bit words
 	uint32_t a, b, c, d, e, f, g, h;		// Working variables
@@ -170,7 +171,7 @@ void sha256(fp){
 	// Padding Calculation variables
 	union msgBlock M;						// current message block
   	enum status S = READ;					// message blocks status
-  	uint64_t numBits = 0;					// number of bits read
+  	int numBits = 0;					// number of bits read
 
 	// Hash Value - Section 5.3.3
 	uint32_t H [8] = {
@@ -273,3 +274,6 @@ uint32_t Ch(uint32_t x, uint32_t y, uint32_t z){
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z){
 	return (x & y) ^ (x & z) ^ (y & z);
 }
+
+
+
