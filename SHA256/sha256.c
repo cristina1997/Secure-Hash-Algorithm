@@ -157,7 +157,6 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){
 	} else if (feof(fp)) { 					// check if we're at the end of the file
 		*S = PAD1;							// another message block with padding is needed
 	} // if.. else if
-
 	return 1;								// the function is called again
 	
 } // int nextMsgBlock() method
@@ -200,7 +199,7 @@ void sha256(fp){
 	}; // K[]
 
 	// Loop through message blocks as per page 22
-	while (nextMsgBlock(fp, M, S, numBits)){
+	while (nextMsgBlock(fp, &M, &S, &numBits)){
 		
 		// Hash Computation - Section 6.4.2
 		// Loops through the first 16 elements of W [] - Step 1 Page 24
