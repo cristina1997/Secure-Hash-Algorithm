@@ -127,6 +127,7 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){
 	numBytes = fread(M -> e, 1, 64, fp);
 	*numBits += numBytes * 8;      
 
+
 	// If less than 56 bytes is read then add padding
 	if (numBytes <= 64-9) {
 		printf("Block with less than 55 bytes! \n");
