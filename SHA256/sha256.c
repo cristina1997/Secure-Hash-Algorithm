@@ -20,6 +20,25 @@
 #include <stdint.h>
 #include <stddef.h>
 
+/* ROTL_n(x) 
+** Shift n positions to the left 	
+** and 32-n positions to the right 
+*/
+#define rotl(a, b) (((a) << (b)) | ((a) >> (32 - (b))))
+
+/* ROTR_n(x) 
+** Shift n positions to the right
+** and 32-n positions to the left 
+*/
+#define rotr(a, b) (((a) >> (b)) | ((a) << (32 - (b))))
+
+#define Ch(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
+#define Maj(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
+#define EP0(x) (rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22))
+#define EP1(x) (rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25))
+#define SIG_0(x) (rotr(x, 7) ^ rotr(x, 18) ^ ((x) >> 3))
+#define SIG_1(x) (rotr(x, 17) ^ rotr(x, 19) ^ ((x) >> 10))
+#define SWAP_UINT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 
 /* Union
 ** - represents a message block
@@ -57,53 +76,39 @@ enum status {
 void sha256(FILE *fp);
 int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits);
 
-// Sigma 0 and 1 computation - Section 4.1.2
-uint32_t sig0(uint32_t x);
-uint32_t sig1(uint32_t x);
-
-// ROTR computation
-uint32_t rotr(uint32_t n, uint32_t x);
-// SHR computation
-uint32_t shr(uint32_t n, uint32_t x);
-
-// SHA-256 Functions - Section 4.1.2
-uint32_t SIG_0(uint32_t x);
-uint32_t SIG_1(uint32_t x);
-uint32_t Ch(uint32_t x, uint32_t y, uint32_t z);
-uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);     
-
 int main(int argc, char *argv[]){ 
 
 	FILE *fp = fp  = fopen(argv [1], "r");		// reads a file 
 		
- 	/* If no file to be opened is mentioned
+	/* If no file to be opened is mentioned
 	** let the user know that no file was mentioned.
-  	** Source code
-    ** - https://stackoverflow.com/questions/9449295/opening-a-fp-from-command-line-arguments-in-c
-    */
-  if (fp == NULL)
-      printf("No file to be open mentioned.\n");
-  else 
-	  sha256(fp);							// run secure hash algorithm
-   
-    fclose(fp);								// close the file
+	** Source code
+	** - https://stackoverflow.com/questions/9449295/opening-a-fp-from-command-line-arguments-in-c
+	*/
+	if (fp == NULL)
+		printf("No file to be open mentioned.\n");
+	else 
+		sha256(fp);							// run secure hash algorithm
+
+	fclose(fp);								// close the file
 
 	return 0;
 } // int main() method
 
 int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){ 
-	int numBytes;						// number of bytes -> between 0 - 64
+	int numBytes;							// number of bytes -> between 0 - 64
 
 	// All message blocks are finished
 	if (*S == FINISH){
 		return 0;
 	}
 	
-	/* If a block full of padding is needed 
-	** then set first 56 bytes to 0 bits
-	** set the last 64 bits to the no. of bits in the file (big endian)
-	** Status == finished.
-	** If S was PAD1 then set the first bit of M to 1.
+	/* IF a block full of padding is needed 
+	** - then set first 56 bytes to 0 bits
+	** - set the last 64 bits to the no. of bits in the file (big endian)
+	** - Status == finished.
+	** 
+	** IF S was PAD1 then set the first bit of M to 1.
 	** - PAD0 - first bit is 0
 	** - PAD1 - first bit is 1
 	*/
@@ -177,7 +182,7 @@ void sha256(FILE *fp){
 	}; // H[8]
 
 	// Constant for the hash computation - Section 4.2.2
-	uint32_t K [] = {
+	uint32_t K [64] = {
 		0x428a2f98, 	0x71374491, 	0xb5c0fbcf, 	0xe9b5dba5, 
 		0x3956c25b, 	0x59f111f1, 	0x923f82a4, 	0xab1c5ed5, 
 		0xd807aa98, 	0x12835b01, 	0x243185be, 	0x550c7dc3, 
@@ -202,20 +207,24 @@ void sha256(FILE *fp){
 		// Hash Computation - Section 6.4.2
 		// Loops through the first 16 elements of W [] - Step 1 Page 24
 		for (int i = 0; i < 16; i++)
-			W  [i] = M.t  [i];
+			W  [i] = SWAP_UINT32(M.t[i]);
 
 		// Loops through the next 48 elements of W [] - Step 1 Page 24
 		for (int i = 16; i < 64; i++)
-			W  [i] = sig1(W [i-2]) + W [i-7] + sig0(W [i-15]) + W [i-16];
-				
+			W  [i] = SIG_1(W [i-2]) + W [i-7] + SIG_0(W [i-15]) + W [i-16];
+		
+		for (int i = 16; i < 64; i++)
+			printf("%08x ", W [i]);	
+		
+
 		// Initialize a, b, c, d, e - Step 2 Page 22
 		a = H [0]; b = H [1]; c = H [2]; d = H [3]; 
 		e = H [4]; f = H [5]; g = H [6]; h = H [7];
 		
 		// Step 3 - Page 23
 		for (int i = 0; i < 64; i++) {
-			T1 = h * SIG_1(e) + Ch(e, f, g) + K  [i] + W  [i];
-			T2 = SIG_0(a) + Maj(a, b, c);
+			T1 = h + EP1(e) + Ch(e, f, g) + K  [i] + W  [i];
+			T2 = EP0(a) + Maj(a, b, c);
 			h = g; g = f; f = e;
 			e = d + T1;
 			d = c; 	c = b; 	b = a;
@@ -227,50 +236,9 @@ void sha256(FILE *fp){
 		H [4] += e;		H [5] += f;		H [6] += g;		H [7] += h;
 	} // while
 	
-
+	printf("\n\n");
 	for (int i = 0; i < 8; i++)
-		printf("%x \n", H [i]);	
+		printf("%x ", H [i]);	
 	
+	printf("\n\n");
 } // void sha256() method
-
-/************* ROTR_n(x) **************/
-/*** shift n positions to the right ***/
-/*** and 32-n positions to the left ***/
-uint32_t rotr(uint32_t x, uint32_t n){
-	return ((x >> n) | (x << (32 - n)));
-}
-
-/********** SHR_n(x) ***********/
-/*** shift right n positions ***/
-uint32_t shr(uint32_t x, uint32_t n){	
-	return (x >> n);
-}
-
-/**  ROTR7(x)   XOR  ROTR18(x)  XOR  SHR3(x)  **/
-uint32_t sig0(uint32_t x){
-	return (rotr(7, x) ^  rotr(18, x) ^ shr(3, x));
-} 
-
-/**  ROTR17(x)  XOR  ROTR19(x)  XOR  SHR10(x)  **/
-uint32_t sig1(uint32_t x){
-	return (rotr(17, x) ^  rotr(19, x) ^ shr(10, x));
-}
-
-uint32_t SIG_0(uint32_t x){
-	return rotr(2, x) ^ rotr(13, x) ^ rotr(22, x);
-}
-
-uint32_t SIG_1(uint32_t x){
-	return rotr(6, x) ^ rotr(11, x) ^ rotr(25, x);;
-}
-
-uint32_t Ch(uint32_t x, uint32_t y, uint32_t z){
-	return (x & y) ^ ((!x) & z);
-}
-
-uint32_t Maj(uint32_t x, uint32_t y, uint32_t z){
-	return (x & y) ^ (x & z) ^ (y & z);
-}
-
-
-
