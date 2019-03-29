@@ -72,31 +72,27 @@ uint32_t SIG_1(uint32_t x);
 uint32_t Ch(uint32_t x, uint32_t y, uint32_t z);
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z);     
 
-int main(int argc, char *argv []){ 
+int main(int argc, char *argv[]){ 
 
-	FILE *fp;
-  fp  = fopen(argv [1], "r");		// reads a file
+	FILE *fp = fp  = fopen(argv [1], "r");		// reads a file 
 		
  	/* If no file to be opened is mentioned
 	** let the user know that no file was mentioned.
   	** Source code
     ** - https://stackoverflow.com/questions/9449295/opening-a-fp-from-command-line-arguments-in-c
     */
-	// if (fp == 0)
-    // {
-    //     printf("No file to be open mentioned.\n");
-    // } else {	
-	// 	sha256(fp);							// run secure hash algorithm
-    // } // if.. else
-
-	sha256(fp);							// run secure hash algorithm
+  if (fp == NULL)
+      printf("No file to be open mentioned.\n");
+  else 
+	  sha256(fp);							// run secure hash algorithm
+   
     fclose(fp);								// close the file
 
 	return 0;
 } // int main() method
 
 int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){ 
-	uint64_t numBytes;						// number of bytes -> between 0 - 64
+	int numBytes;						// number of bytes -> between 0 - 64
 
 	// All message blocks are finished
 	if (*S == FINISH){
