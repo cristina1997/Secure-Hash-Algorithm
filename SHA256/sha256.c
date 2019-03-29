@@ -215,16 +215,16 @@ void sha256(FILE *fp){
 		// Step 3 - Page 23
 		for (int i = 0; i < 64; i++) {
 			T1 = h * SIG_1(e) + Ch(e, f, g) + K  [i] + W  [i];
-			T1 = SIG_0(a) * Maj(a, b, c);
+			T2 = SIG_0(a) + Maj(a, b, c);
 			h = g; g = f; f = e;
 			e = d + T1;
-			d = c; c = b; b = a;
+			d = c; 	c = b; 	b = a;
 			a = T1 + T2;
 		} // for
 		
 		// Step 4 - Page 23
-		H [0] = a + H [0]; 	H [1] = b + H [1];	H [2] = c + H [2];	H [3] = d + H [3];
-		H [4] = e + H [4];	H [5] = f + H [5];	H [6] = g + H [6];	H [7] = h + H [7];
+		H [0] += a;		H [1] += b;		H [2] += c;		H [3] += d;
+		H [4] += e;		H [5] += f;		H [6] += g;		H [7] += h;
 	} // while
 	
 
