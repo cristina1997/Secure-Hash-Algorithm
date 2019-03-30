@@ -19,7 +19,7 @@
 ** 		* https://www.planetebook.com/free-ebooks/gullivers-travels.pdf
 ** - PDF to TEXT Converter:
 ** 		* https://pdftotext.com
-** - Macro Definitions
+** - Macro Definitions:
 ** 		* https://github.com/B-Con/crypto-algorithms/blob/master/sha256.c
 */
 
