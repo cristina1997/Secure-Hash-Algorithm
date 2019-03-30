@@ -24,7 +24,12 @@
 ** Shift n positions to the left 	
 ** and 32-n positions to the right 
 */
-#define rotl(a, b) (((a) << (b)) | ((a) >> (32 - (b))))
+#define rotl(x, n) ((x << n) | (x >> (32 - n)))
+
+/* SHR_n(x) 
+** Shift n positions to the left 
+*/
+#define shr(x, n) (x >> n)
 
 /* ROTR_n(x) 
 ** Shift n positions to the right
@@ -32,12 +37,12 @@
 */
 #define rotr(a, b) (((a) >> (b)) | ((a) << (32 - (b))))
 
-#define Ch(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
-#define Maj(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
+#define Ch(x, y, z) ((x & y) ^ (~(x) & z ))
+#define Maj(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
 #define EP0(x) (rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22))
 #define EP1(x) (rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25))
-#define SIG_0(x) (rotr(x, 7) ^ rotr(x, 18) ^ ((x) >> 3))
-#define SIG_1(x) (rotr(x, 17) ^ rotr(x, 19) ^ ((x) >> 10))
+#define SIG_0(x) (rotr(x, 7) ^ rotr(x, 18) ^ shr(x, 3))
+#define SIG_1(x) (rotr(x, 17) ^ rotr(x, 19) ^ shr(x, 10))
 #define ENDIAN_SWAP_UINT64(x) ( \
     (( (x) &  0x00000000000000ff) << 56) | \
     (( (x) &  0x000000000000ff00) << 40) | \
@@ -47,7 +52,11 @@
     (( (x) &  0x0000ff0000000000) >> 24) | \
     (( (x) &  0x00ff000000000000) >> 40) | \
     (( (x) &  0xff00000000000000) >> 56))
-#define ENDIAN_SWAP_UINT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
+#define ENDIAN_SWAP_UINT32(x) ( \
+	((x) >> 24) | \
+	(((x) & 0x00FF0000) >> 8) | \
+	(((x) & 0x0000FF00) << 8) | \
+	((x) << 24))
 
 /* Union
 ** - represents a message block
