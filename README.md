@@ -26,4 +26,4 @@ First and foremost, you will need to install [The GCC Compiler](http://www.codeb
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Now, run the code </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```> <executable-name> test/<text-file-name.txt>``` </br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there is a file that wish to test yourself, you can copy the file in the **test-text-files** folder and then use the above code to execute it
+          If there is a file that wish to test yourself, you can copy the file in the **test-text-files** folder and then use the above code to execute it
