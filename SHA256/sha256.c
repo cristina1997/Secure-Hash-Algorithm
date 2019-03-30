@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
 		printf("No file to be open mentioned.\n");
 	}
 	else {
-		printf("\n\tFILE CONTENT: \n\t\t- ");
+		printf("\n\tFILE CONTENT: \n\t\t-> ");
 		 while((fileContent = fgetc(fprint)) != EOF) 
      		 printf("%c", fileContent);
 		sha256(fp);										// run secure hash algorithm
@@ -199,7 +199,7 @@ void sha256(FILE *fp){
 		H[4] += e;		H[5] += f;		H[6] += g;		H[7] += h;
 	} // while
 	
-	printf("\n\tHASH CONTENT: \n\t\t- ");
+	printf("\n\tHASH CONTENT: \n\t\t-> ");
 	for (int i = 0; i < 8; i++)
 		printf("%x ", H[i]);	
 	
