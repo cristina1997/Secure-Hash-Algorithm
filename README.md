@@ -6,7 +6,7 @@ The user can input the path-name of the folder via the commant line or use the a
 ***
 
 ## Run
-First and foremost, you will need to install [The GCC Compiler](http://www.codebind.com/cprogramming/install-mingw-windows-10-gcc/) (you might need to restart your computer after the installation is completed and [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) (if not already installed).
+First and foremost, you will need to install [the GCC Compiler](http://www.codebind.com/cprogramming/install-mingw-windows-10-gcc/) (you might need to restart your computer after the installation is completed and [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) (if not already installed).
 
 1. **Clone Repo**
 
