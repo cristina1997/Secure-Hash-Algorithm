@@ -86,7 +86,6 @@ enum status {
 	FINISH,
 };             
 
-
 /** 
 ***	Declaration of methods
 **/
@@ -96,17 +95,24 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits);
 
 int main(int argc, char *argv[]){ 
 
-	FILE *fp = fp  = fopen(argv [1], "r");		// reads a file 
+	FILE *fp = fopen(argv [1], "r");		// reads a file 
+	FILE *fprint = fopen(argv [1], "r");		// reads a file 
+	char fileContent;
 		
 	/* If no file to be opened is mentioned
 	** let the user know that no file was mentioned.
 	** Source code
 	** - https://stackoverflow.com/questions/9449295/opening-a-fp-from-command-line-arguments-in-c
 	*/
-	if (fp == NULL)
+	if (fp == NULL) {
 		printf("No file to be open mentioned.\n");
-	else 
+	}
+	else {
+		printf("\n\tFILE CONTENT: \n\t\t- ");
+		 while((fileContent = fgetc(fprint)) != EOF) 
+     		 printf("%c", fileContent);
 		sha256(fp);							// run secure hash algorithm
+	}
 
 	fclose(fp);								// close the file
 
@@ -154,7 +160,7 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){
 
 	// If less than 56 bytes is read then add padding
 	if (numBytes <= 64-9) {
-		printf("Block with less than 55 bytes! \n");
+		// printf("Block with less than 55 bytes! \n");
 		// M.e [numBytes] = 0x01;			// first byte in M that hasn't been overriden
 											// -> right most position
 		M -> e [numBytes] = 0x80;			// first byte in M that hasn't been overriden
@@ -231,11 +237,7 @@ void sha256(FILE *fp){
 
 		// Loops through the next 48 elements of W [] - Step 1 Page 24
 		for (int i = 16; i < 64; i++)
-			W  [i] = SIG_1(W [i-2]) + W [i-7] + SIG_0(W [i-15]) + W [i-16];
-		
-		for (int i = 16; i < 64; i++)
-			printf("%08x ", W [i]);	
-		
+			W  [i] = SIG_1(W [i-2]) + W [i-7] + SIG_0(W [i-15]) + W [i-16];		
 
 		// Initialize a, b, c, d, e - Step 2 Page 22
 		a = H [0]; b = H [1]; c = H [2]; d = H [3]; 
@@ -256,7 +258,7 @@ void sha256(FILE *fp){
 		H [4] += e;		H [5] += f;		H [6] += g;		H [7] += h;
 	} // while
 	
-	printf("\n\n");
+	printf("\n\tHASH CONTENT: \n\t\t- ");
 	for (int i = 0; i < 8; i++)
 		printf("%x ", H [i]);	
 	
