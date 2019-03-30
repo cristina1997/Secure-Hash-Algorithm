@@ -35,12 +35,21 @@ int nextMsgBlock(FILE *fp, 								// PADDING computation
 				union msgBlock *M, 
 				enum status *S, 
 				int *numBits);
+long int findSize(FILE *fzise);
 
 int main(int argc, char *argv[]){ 
 
+	// Variables for reading the file
 	FILE *fp = fopen(argv[1], "r");						// reads a file for computation
 	FILE *fprint = fopen(argv[1], "r");					// reads a file for printing to the console
+	FILE *fzise = fopen(argv[1], "r");					// reads a file to find out its size
+	
+	// Char variable for the file contents
 	char fileContent;									// variable to read contents of the file character by character
+
+	// Constants
+	const long int FILESIZE = findSize(fzise);			// it gets the size of the file content
+	const long int MAXSIZE = 500000;					// the maximum size the file cannot surpass if it is to be printed to the console
 		
 	/* If no file to be opened is mentioned
 	** let the user know that no file was mentioned.
@@ -51,9 +60,30 @@ int main(int argc, char *argv[]){
 		printf("No file to be open mentioned.\n");
 	}
 	else {
-		printf("\n\tFILE CONTENT: \n\t\t-> ");
-		 while((fileContent = fgetc(fprint)) != EOF) 
-     		 printf("%c", fileContent);
+		
+		if (FILESIZE == 0) {
+			/* If the file size is 0 KB 
+			** there is nothing to output
+			*/
+			printf("\n\tFILE CONTENT: \n\t\t   THE FILE IS EMPTY, NOTHING TO OUTPUT!");
+		} else if (FILESIZE >= MAXSIZE) {
+			/* If the file size is more than 5 MB 
+			** there is too much content to output 
+			** and it could slow down the algorithm
+			*/
+			printf("\n\tFILE CONTENT: \n\t\t   THE FILE IS TOO BIG TO BE OUTPUTTED!");
+		} else {
+			/* If the file size is less than 5 MB 
+			** then the file content can be outputted 
+			** without slowing down the algorithm
+			*/
+			printf("\n\tFILE CONTENT: \n\t\t-> ");
+			while((fileContent = fgetc(fprint)) != EOF) 
+				printf("%c", fileContent);				// Printing file contents to the console: 
+														// Source code 
+														// 	-> https://www.tutorialspoint.com/print-contents-of-a-file-in-c
+		}
+		
 		sha256(fp);										// run secure hash algorithm
 	}
 
@@ -61,6 +91,24 @@ int main(int argc, char *argv[]){
 
 	return 0;
 } // int main() method
+
+
+// Find out how big the file is
+// Source code:
+// -> https://www.geeksforgeeks.org/c-program-find-size-file/
+long int findSize(FILE *fzise) 
+{ 
+ 
+    fseek(fzise, 0L, SEEK_END); 
+  
+    // calculating the size of the file 
+    long int res = ftell(fzise); 
+  
+    // closing the file 
+    fclose(fzise); 
+  
+    return res; 
+} 
 
 int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){ 
 	int numBytes;										// number of bytes -> between 0 - 64
