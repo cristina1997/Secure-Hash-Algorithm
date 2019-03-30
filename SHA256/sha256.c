@@ -15,6 +15,10 @@
 **      * https://web.microsoftstream.com/video/200e71ec-1dc1-47a4-9de8-6f58781e3f38
 ** - Pointers:
 ** 		* https://web.microsoftstream.com/video/f823809a-d8df-4e12-b243-e1f8ed76b93f
+** - Gulliver's Travels PDF:
+** 		* https://www.planetebook.com/free-ebooks/gullivers-travels.pdf
+** - PDF to TEXT Converter:
+** 		* https://pdftotext.com
 */
 #include <stdio.h>
 #include <stdint.h>
