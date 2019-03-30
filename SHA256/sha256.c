@@ -20,78 +20,16 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "headers/big-endians.h" 
-
-
-/* 			ROTL_n(x) 
-** SHIFT N POSITIONS TO THE LEFT
-** AND 32-n POSITIONS TO THE RIGHT
-**********************************
-** 			ROTR_n(x) 
-** SHIFT N POSITIONS TO THE RIGHT
-** AND 32-n POSITIONS TO THE LEFT
-**********************************
-**			SHR_n(x) 
-** SHIFT N POSITIONS TO THE LEFT
-*/
-#define rotl(x, n) ((x << n) | (x >> (32 - n)))
-#define rotr(x, n) ((x >> n) | (x << (32 - n)))
-#define shr(x, n) (x >> n)
-
-
-#define Ch(x, y, z) ((x & y) ^ (~(x) & z ))
-#define Maj(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
-#define EP0(x) (rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22))
-#define EP1(x) (rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25))
-#define SIG_0(x) (rotr(x, 7) ^ rotr(x, 18) ^ shr(x, 3))
-#define SIG_1(x) (rotr(x, 17) ^ rotr(x, 19) ^ shr(x, 10))
-
-/* UNION
-** - represents a message block
-** - used to read file in blocks of 512 bits
-** - like structures (structs)
-** - can only store one value at a time
-** - stored in the same location.
-** - used in variables related to each other
-**   that might have different types.
-*/
-union msgBlock{
-    uint8_t  e[64];                                   // 8  bits(type) * 64 = 512
-    uint32_t t[16];                                   // 32 bits(type) * 16 = 512
-    uint64_t s[8];                                    // 64 bits(type) * 8  = 512
-};
-
-/* UNION
-** - represents a message block
-** - used to read file in blocks of 512 bits
-** - like structures (structs)
-** - can only store one value at a time
-** - stored in the same location.
-** - used in variables related to each other
-**   that might have different types.
-*/
-struct temp {
-	// Temporary variables 
-	uint32_t TEMP1;	
-	uint32_t TEMP2;	
-};
-
-/* Flag for File Read
-** - READ     = 0
-** - PAD0     = 1
-** - PAD1     = 2
-** - FINISH   = 3
-*/
-enum status {
-	READ, 
-	PAD0, 
-	PAD1, 
-	FINISH,
-};             
+#include "headers/rotate-def.h"
+#include "headers/sha256-methods.h"
+#include "headers/status.h"
+#include "headers/message-block.h"
+#include "headers/temporary.h"
+      
 
 /** 
 ***	Declaration of methods
 **/
-
 void sha256(FILE *fp);									// SHA computation
 int nextMsgBlock(FILE *fp, 								// PADDING computation
 				union msgBlock *M, 
@@ -100,9 +38,9 @@ int nextMsgBlock(FILE *fp, 								// PADDING computation
 
 int main(int argc, char *argv[]){ 
 
-	FILE *fp = fopen(argv[1], "r");						// reads a file 
-	FILE *fprint = fopen(argv[1], "r");					// reads a file 
-	char fileContent;
+	FILE *fp = fopen(argv[1], "r");						// reads a file for computation
+	FILE *fprint = fopen(argv[1], "r");					// reads a file for printing to the console
+	char fileContent;									// variable to read contents of the file character by character
 		
 	/* If no file to be opened is mentioned
 	** let the user know that no file was mentioned.
