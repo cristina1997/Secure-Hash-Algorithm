@@ -38,7 +38,16 @@
 #define EP1(x) (rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25))
 #define SIG_0(x) (rotr(x, 7) ^ rotr(x, 18) ^ ((x) >> 3))
 #define SIG_1(x) (rotr(x, 17) ^ rotr(x, 19) ^ ((x) >> 10))
-#define SWAP_UINT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
+#define ENDIAN_SWAP_UINT64(x) ( \
+    (( (x) &  0x00000000000000ff) << 56) | \
+    (( (x) &  0x000000000000ff00) << 40) | \
+    (( (x) &  0x0000000000ff0000) << 24) | \
+    (( (x) &  0x00000000ff000000) <<  8) | \
+    (( (x) &  0x000000ff00000000) >>  8) | \
+    (( (x) &  0x0000ff0000000000) >> 24) | \
+    (( (x) &  0x00ff000000000000) >> 40) | \
+    (( (x) &  0xff00000000000000) >> 56))
+#define ENDIAN_SWAP_UINT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 
 /* Union
 ** - represents a message block
@@ -118,6 +127,7 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){
 
 
 		M -> s [7] = *numBits;       
+		M -> s [7] = ENDIAN_SWAP_UINT64(M -> s [7]);
 		*S = FINISH;
 
 		
@@ -147,6 +157,7 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){
 		} // while
 
 		M -> s [7] = *numBits;				// append file size in bits (big endian) - 64 bit int
+		M -> s [7] = ENDIAN_SWAP_UINT64(M -> s [7]);
 		*S = FINISH;						// Status == finished
 
 	} else if (numBytes < 64) {				// check if there's enough space for paddings
@@ -207,7 +218,7 @@ void sha256(FILE *fp){
 		// Hash Computation - Section 6.4.2
 		// Loops through the first 16 elements of W [] - Step 1 Page 24
 		for (int i = 0; i < 16; i++)
-			W  [i] = SWAP_UINT32(M.t[i]);
+			W  [i] = ENDIAN_SWAP_UINT32(M.t[i]);
 
 		// Loops through the next 48 elements of W [] - Step 1 Page 24
 		for (int i = 16; i < 64; i++)
