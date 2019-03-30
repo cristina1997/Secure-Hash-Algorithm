@@ -32,16 +32,16 @@
 ** SHIFT N POSITIONS TO THE LEFT
 */
 #define rotl(x, n) ((x << n) | (x >> (32 - n)))
-#define rotr	(x, n) ((x >> n) | (x << (32 - n)))
-#define shr		(x, n) (x >> n)
+#define rotr(x, n) ((x >> n) | (x << (32 - n)))
+#define shr(x, n) (x >> n)
 
 
-#define Ch		(x, y, z) ((x & y) ^ (~(x) & z ))
-#define Maj		(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
-#define EP0		(x) (rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22))
-#define EP1		(x) (rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25))
-#define SIG_0 	(x) (rotr(x, 7) ^ rotr(x, 18) ^ shr(x, 3))
-#define SIG_1	(x) (rotr(x, 17) ^ rotr(x, 19) ^ shr(x, 10))
+#define Ch(x, y, z) ((x & y) ^ (~(x) & z ))
+#define Maj(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
+#define EP0(x) (rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22))
+#define EP1(x) (rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25))
+#define SIG_0(x) (rotr(x, 7) ^ rotr(x, 18) ^ shr(x, 3))
+#define SIG_1(x) (rotr(x, 17) ^ rotr(x, 19) ^ shr(x, 10))
 
 /*
 ** 			ENDIAN_SWAP_UINT64
