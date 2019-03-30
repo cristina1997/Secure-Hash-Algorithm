@@ -20,29 +20,36 @@
 #include <stdint.h>
 #include <stddef.h>
 
-/* ROTL_n(x) 
-** Shift n positions to the left 	
-** and 32-n positions to the right 
+/* 			ROTL_n(x) 
+** SHIFT N POSITIONS TO THE LEFT
+** AND 32-n POSITIONS TO THE RIGHT
+**********************************
+** 			ROTR_n(x) 
+** SHIFT N POSITIONS TO THE RIGHT
+** AND 32-n POSITIONS TO THE LEFT
+**********************************
+**			SHR_n(x) 
+** SHIFT N POSITIONS TO THE LEFT
 */
 #define rotl(x, n) ((x << n) | (x >> (32 - n)))
+#define rotr	(x, n) ((x >> n) | (x << (32 - n)))
+#define shr		(x, n) (x >> n)
 
-/* SHR_n(x) 
-** Shift n positions to the left 
+
+#define Ch		(x, y, z) ((x & y) ^ (~(x) & z ))
+#define Maj		(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
+#define EP0		(x) (rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22))
+#define EP1		(x) (rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25))
+#define SIG_0 	(x) (rotr(x, 7) ^ rotr(x, 18) ^ shr(x, 3))
+#define SIG_1	(x) (rotr(x, 17) ^ rotr(x, 19) ^ shr(x, 10))
+
+/*
+** 			ENDIAN_SWAP_UINT64
+** CONVERTS 64 BIT INTEGERS TO BIG INTS
+***************************************
+** 			ENDIAN_SWAP_UINT32
+** CONVERTS 32 BIT INTEGERS TO BIG INTS
 */
-#define shr(x, n) (x >> n)
-
-/* ROTR_n(x) 
-** Shift n positions to the right
-** and 32-n positions to the left 
-*/
-#define rotr(a, b) (((a) >> (b)) | ((a) << (32 - (b))))
-
-#define Ch(x, y, z) ((x & y) ^ (~(x) & z ))
-#define Maj(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
-#define EP0(x) (rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22))
-#define EP1(x) (rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25))
-#define SIG_0(x) (rotr(x, 7) ^ rotr(x, 18) ^ shr(x, 3))
-#define SIG_1(x) (rotr(x, 17) ^ rotr(x, 19) ^ shr(x, 10))
 #define ENDIAN_SWAP_UINT64(x) ( \
     (( (x) &  0x00000000000000ff) << 56) | \
     (( (x) &  0x000000000000ff00) << 40) | \
@@ -58,7 +65,7 @@
 	(((x) & 0x0000FF00) << 8) | \
 	((x) << 24))
 
-/* Union
+/* UNION
 ** - represents a message block
 ** - used to read file in blocks of 512 bits
 ** - like structures (structs)
@@ -73,6 +80,15 @@ union msgBlock{
     uint64_t s[8];                                    // 64 bits(type) * 8  = 512
 };
 
+/* UNION
+** - represents a message block
+** - used to read file in blocks of 512 bits
+** - like structures (structs)
+** - can only store one value at a time
+** - stored in the same location.
+** - used in variables related to each other
+**   that might have different types.
+*/
 struct temp {
 	// Temporary variables 
 	uint32_t TEMP1;	
@@ -95,14 +111,17 @@ enum status {
 /** 
 ***	Declaration of methods
 **/
-// SHA computation
-void sha256(FILE *fp);
-int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits);
+
+void sha256(FILE *fp);									// SHA computation
+int nextMsgBlock(FILE *fp, 								// PADDING computation
+				union msgBlock *M, 
+				enum status *S, 
+				int *numBits);
 
 int main(int argc, char *argv[]){ 
 
-	FILE *fp = fopen(argv[1], "r");		// reads a file 
-	FILE *fprint = fopen(argv[1], "r");		// reads a file 
+	FILE *fp = fopen(argv[1], "r");						// reads a file 
+	FILE *fprint = fopen(argv[1], "r");					// reads a file 
 	char fileContent;
 		
 	/* If no file to be opened is mentioned
@@ -117,16 +136,16 @@ int main(int argc, char *argv[]){
 		printf("\n\tFILE CONTENT: \n\t\t- ");
 		 while((fileContent = fgetc(fprint)) != EOF) 
      		 printf("%c", fileContent);
-		sha256(fp);							// run secure hash algorithm
+		sha256(fp);										// run secure hash algorithm
 	}
 
-	fclose(fp);								// close the file
+	fclose(fp);											// close the file
 
 	return 0;
 } // int main() method
 
 int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){ 
-	int numBytes;							// number of bytes -> between 0 - 64
+	int numBytes;										// number of bytes -> between 0 - 64
 
 	// All message blocks are finished
 	if (*S == FINISH){
@@ -137,14 +156,14 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){
 	** - then set first 56 bytes to 0 bits
 	** - set the last 64 bits to the no. of bits in the file (big endian)
 	** - Status == finished.
-	** 
+	********************************************************************
 	** IF S was PAD1 then set the first bit of M to 1.
 	** - PAD0 - first bit is 0
 	** - PAD1 - first bit is 1
 	*/
 	if (*S == PAD0 || *S == PAD1) {
-		for (int i = 0; i <= 64-9; i++)		// leaves 8 bytes at the end for the 64 bit integer
-			M->e[i] = 0x00;					// padding the 448 bits with 0s
+		for (int i = 0; i <= 64-9; i++)					// leaves 8 bytes at the end for the 64 bit integer
+			M->e[i] = 0x00;								// padding the 448 bits with 0s
 
 
 		M->s[7] = *numBits;       
@@ -167,45 +186,45 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){
 	// If less than 56 bytes is read then add padding
 	if (numBytes <= 64-9) {
 		// printf("Block with less than 55 bytes! \n");
-		// M.e[numBytes] = 0x01;			// first byte in M that hasn't been overriden
-											//	-> right most position
-		M->e[numBytes] = 0x80;				// first byte in M that hasn't been overriden
-											//	->	left most position
+		// M.e[numBytes] = 0x01;						// first byte in M that hasn't been overriden
+														//	-> right most position
+		M->e[numBytes] = 0x80;							// first byte in M that hasn't been overriden
+														//	->	left most position
 		
 		while (numBytes <= 64-9){
 			numBytes += 1;
-			M->e[numBytes] = 0x00;			// add k amount of 0s before appending
+			M->e[numBytes] = 0x00;						// add k amount of 0s before appending
 		} // while
 
-		M->s[7] = *numBits;					// append file size in bits (big endian) - 64 bit int
+		M->s[7] = *numBits;								// append file size in bits (big endian) - 64 bit int
 		M->s[7] = ENDIAN_SWAP_UINT64(M->s[7]);
-		*S = FINISH;						// Status == finished
+		*S = FINISH;									// Status == finished
 
-	} else if (numBytes < 64) {				// check if there's enough space for paddings
-		*S = PAD0;							// it aknowledges a message block containing all 0s is needed
-		M->e[numBytes] = 0x80;				// insert 1 bit in current block
+	} else if (numBytes < 64) {							// check if there's enough space for paddings
+		*S = PAD0;										// it aknowledges a message block containing all 0s is needed
+		M->e[numBytes] = 0x80;							// insert 1 bit in current block
 
 		while (numBytes < 64) {				
 			numBytes += 1;
-			M->e[numBytes] = 0x00;			// padd the rest with 0s
+			M->e[numBytes] = 0x00;						// padd the rest with 0s
 		} // while
-	} else if (feof(fp)) { 					// check if we're at the end of the file
-		*S = PAD1;							// another message block with padding is needed
+	} else if (feof(fp)) { 								// check if we're at the end of the file
+		*S = PAD1;										// another message block with padding is needed
 	} // if.. else if
-	return 1;								// the function is called again
+	return 1;											// the function is called again
 	
 } // int nextMsgBlock() method
 
 void sha256(FILE *fp){
 	// SHA Calculation variables
 	struct temp *ctxT;	
-	uint32_t W[64];							// Message schedule - 64 bit words
-	uint32_t a, b, c, d, e, f, g, h;		// Working variables
+	uint32_t W[64];										// Message schedule - 64 bit words
+	uint32_t a, b, c, d, e, f, g, h;					// Working variables
 	
 	// Padding Calculation variables
-	union msgBlock M;						// current message block
-  	enum status S = READ;					// message blocks status
-  	int numBits = 0;						// number of bits read
+	union msgBlock M;									// current message block
+  	enum status S = READ;								// message blocks status
+  	int numBits = 0;									// number of bits read
 
 	// Hash Value - Section 5.3.3
 	uint32_t H[8] = {
