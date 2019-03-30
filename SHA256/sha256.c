@@ -19,7 +19,10 @@
 ** 		* https://www.planetebook.com/free-ebooks/gullivers-travels.pdf
 ** - PDF to TEXT Converter:
 ** 		* https://pdftotext.com
+** - Macro Definitions
+** 		* https://github.com/B-Con/crypto-algorithms/blob/master/sha256.c
 */
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -29,6 +32,7 @@
 #include "headers/status.h"
 #include "headers/message-block.h"
 #include "headers/temporary.h"
+#include "headers/arr-sizes.h"
 
 /** 
 ***	Declaration of methods
@@ -199,7 +203,7 @@ void sha256(FILE *fp)
 {
 	// SHA Calculation variables
 	struct temp *ctxT;
-	uint32_t W[64];					 // Message schedule - 64 bit words
+	uint32_t W[W_SIZE];				 // Message schedule - 64 bit words
 	uint32_t a, b, c, d, e, f, g, h; // Working variables
 
 	// Padding Calculation variables
@@ -208,12 +212,12 @@ void sha256(FILE *fp)
 	int numBits = 0;	  // number of bits read
 
 	// Hash Value - Section 5.3.3
-	uint32_t H[8] = {
+	uint32_t H[H_SIZE] = {
 		0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
 		0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19}; // H[8]
 
 	// Constant for the hash computation - Section 4.2.2
-	uint32_t K[64] = {
+	uint32_t K[K_SIZE] = {
 		0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
 		0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
 		0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
