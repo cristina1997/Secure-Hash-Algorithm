@@ -212,6 +212,7 @@ void sha256(FILE *fp)
 {
 	// SHA Calculation variables
 	struct temp *ctxT;
+	uint32_t TEMP1, TEMP2;
 	uint32_t W[W_SIZE];				 // Message schedule - 64 bit words
 	uint32_t a, b, c, d, e, f, g, h; // Working variables
 
