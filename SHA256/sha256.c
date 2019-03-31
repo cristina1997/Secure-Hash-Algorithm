@@ -146,7 +146,7 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){
 
 	// If less than 56 bytes is read then add padding
 	if (numBytes <= 64-9) {
-		printf("Block with less than 55 bytes! \n");
+		// printf("Block with less than 55 bytes! \n");
 		// M.e [numBytes] = 0x01;			// first byte in M that hasn't been overriden
 											// -> right most position
 		M -> e [numBytes] = 0x80;			// first byte in M that hasn't been overriden
@@ -225,9 +225,6 @@ void sha256(FILE *fp){
 		for (int i = 16; i < 64; i++)
 			W  [i] = SIG_1(W [i-2]) + W [i-7] + SIG_0(W [i-15]) + W [i-16];
 		
-		for (int i = 16; i < 64; i++)
-			printf("%08x ", W [i]);	
-		
 
 		// Initialize a, b, c, d, e - Step 2 Page 22
 		a = H [0]; b = H [1]; c = H [2]; d = H [3]; 
@@ -248,9 +245,12 @@ void sha256(FILE *fp){
 		H [4] += e;		H [5] += f;		H [6] += g;		H [7] += h;
 	} // while
 	
-	printf("\n\n");
+	printf("\n\tHASH CONTENT: ");
+	printf("\n\t  1. Unrecognized: with spaces - Cannot be recognised as hash if you wish to check the output. \n\t\t-> ");
 	for (int i = 0; i < 8; i++)
-		printf("%x ", H [i]);	
-	
-	printf("\n\n");
+		printf("%x ", H[i]);
+
+	printf("\n\t  2. Recognized: without spaces - Can be recognised as hash if you wish to check the output.\n\t\t-> ");
+	for (int i = 0; i < 8; i++)
+		printf("%x", H[i]);
 } // void sha256() methods
