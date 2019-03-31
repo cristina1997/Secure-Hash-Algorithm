@@ -15,6 +15,21 @@
 **      * https://web.microsoftstream.com/video/200e71ec-1dc1-47a4-9de8-6f58781e3f38
 ** - Pointers:
 ** 		* https://web.microsoftstream.com/video/f823809a-d8df-4e12-b243-e1f8ed76b93f
+** - Gulliver's Travels PDF:
+** 		* https://www.planetebook.com/free-ebooks/gullivers-travels.pdf
+** - PDF to TEXT Converter:
+** 		* https://pdftotext.com
+** - Test SHA Algorithm:
+**		* Test vectors for SHA-1, SHA-2 and SHA-3:
+**			https://www.di-mgt.com.au/sha_testvectors.html
+** 		* Files:
+**			https://www.online-convert.com/result/2442f21e-b1ec-49b9-b258-fe0165942a6d
+**		* Strings:
+**			https://www.xorbin.com/tools/sha256-hash-calculator
+**		* Tests if SHA Algorithm outputs the file contsnt
+**			https://crackstation.net
+** - Macro Definitions:
+** 		* https://github.com/B-Con/crypto-algorithms/blob/master/sha256.c
 */
 #include <stdio.h>
 #include <stdint.h>
