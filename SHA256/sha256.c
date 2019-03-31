@@ -109,11 +109,34 @@ int main(int argc, char *argv[]){
 		printf("No file to be open mentioned.\n");
 	} else {
 
-		printf("\n\tFILE CONTENT: \n\t\t-> ");
-		while ((fileContent = fgetc(fprint)) != EOF)
-			printf("%c", fileContent); // Printing file contents to the console:
-										// Source code
-										// 	-> https://www.tutorialspoint.com/print-contents-of-a-file-in-c
+		if (FILESIZE == 0)
+		{
+			/* If the file size is 0 KB 
+			** there is nothing to output
+			*/
+			printf("\n\tFILE CONTENT: \n\t\t   THE FILE IS EMPTY, NOTHING TO OUTPUT!");
+		}
+		else if (FILESIZE >= MAXSIZE)
+		{
+			/* If the file size is more than 5 MB 
+			** there is too much content to output 
+			** and it could slow down the algorithm
+			*/
+			printf("\n\tFILE CONTENT: \n\t\t   THE FILE IS TOO BIG TO BE OUTPUTTED!");
+		}
+		else
+		{
+			/* If the file size is less than 5 MB 
+			** then the file content can be outputted 
+			** without slowing down the algorithm
+			*/
+			printf("\n\tFILE CONTENT: \n\t\t-> ");
+			while ((fileContent = fgetc(fprint)) != EOF)
+				printf("%c", fileContent); // Printing file contents to the console:
+										   // Source code
+										   // 	-> https://www.tutorialspoint.com/print-contents-of-a-file-in-c
+		}
+
 		sha256(fp);							// run secure hash algorithm
 	}
 
