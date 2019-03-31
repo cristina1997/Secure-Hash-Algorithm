@@ -297,4 +297,6 @@ void sha256(FILE *fp)
 	printf("\n\t  2. Recognized: without spaces - Can be recognised as hash if you wish to check the output.\n\t\t-> ");
 	for (int i = 0; i < 8; i++)
 		printf("%x", H[i]);
+
+	printf("\n\n");
 } // void sha256() methods
