@@ -1,7 +1,7 @@
 # Secure-Hash-Algorithm
 
 This is a program that calculates the Secure Hash Algorithm Version 2 (SHA-256 to be specific) of a text file input. 
-The user can input the path-name of the folder via the commant line or use the already provided test files from the "**test-text-files**" folder.
+The users can use the already provided test files from the "**test**" folder or use a text file of their own by copying it onto the "**test**" folder.
 
 ***
 
