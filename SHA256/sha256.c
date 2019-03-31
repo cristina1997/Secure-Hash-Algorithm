@@ -1,6 +1,7 @@
 /* Cristina Nita, 2019 - SHA Project - No Padding
 ** Secure Hash Algorithm, 256 bit version (SHA256)
 ** - https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977
+** - https://www.google.ie/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=2ahUKEwiY4O2Vpa3hAhXhQxUIHRNRCTgQFjAAegQIAxAC&url=https%3A%2F%2Fwww.researchgate.net%2Ffile.PostFileLoader.html%3Fid%3D534b393ad3df3e04508b45ad%26assetKey%3DAS%253A273514844622849%25401442222429260&usg=AOvVaw1TvK13udFN1J1ZwmfGiRWs
 ** Source code adapted from
 ** - SHA-256 Algorithm
 ** 		* Part 1:
