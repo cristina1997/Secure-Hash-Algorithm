@@ -25,9 +25,9 @@ The 2nd step is to initialize the 64 binary words - **K[64]** - into characteris
 The original message starts with a length of **L** bits. A single 1 bit is added at the end followed by a **K** number of *'0'* bits in which K is the *smallest positive integer* such that **L + 1 + K = 448 mod 512**. Finally, add **L** at the end of the message, the original bits with which we started, represented by exactly 64 bits.
 
 4. Process the message in successive 512-bit chunks: </br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Break the message into 512-bit blocks and for each blocks create a create 64 words - **W[64]** - of 32 bits each as follows:*
-* ***first 16*** - split M in 32 bit blocks
-* ***remaining 48*** - obtained with the formula found on the [Archived NIST Technical Series Publication](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977) in **Section 6.2.2, Step 1**
+&nbsp;&nbsp;&nbsp;&nbsp;*Break the message into 512-bit blocks and for each blocks create a create 64 words - **W[64]** - of 32 bits each as follows:*
+&nbsp;&nbsp;* ***first 16*** - split M in 32 bit blocks
+&nbsp;&nbsp;* ***remaining 48*** - obtained with the formula found on the [Archived NIST Technical Series Publication](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977) in **Section 6.2.2, Step 1**
 
 5. Working variables: </br>
 Initialize the working variables to the current hash value as per **[Section 6.2.2, Step 2](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
