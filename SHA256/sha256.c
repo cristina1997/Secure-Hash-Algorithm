@@ -39,6 +39,7 @@
 #include "headers/sha256-methods.h"
 #include "headers/message-block.h"
 #include "headers/status.h"
+#include "headers/arr-sizes.h"
 
 /** 
 ***	Declaration of methods
@@ -48,11 +49,12 @@ void sha256(FILE *fp);
 long int findSize(FILE *fsize);
 int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits);
 
-int main(int argc, char *argv[]){ 
+int main(int argc, char *argv[])
+{
 
-	FILE *fp = fp  = fopen(argv [1], "r");	// reads a file for computation
-	FILE *fprint = fopen(argv[1], "r"); // reads a file for printing to the console
-	FILE *fsize = fopen(argv[1], "r");  // reads a file to find out its size
+	FILE *fp = fp = fopen(argv[1], "r"); // reads a file for computation
+	FILE *fprint = fopen(argv[1], "r");  // reads a file for printing to the console
+	FILE *fsize = fopen(argv[1], "r");   // reads a file to find out its size
 
 	// Char variable for the file contents
 	char fileContent; // variable to read contents of the file character by character
@@ -60,15 +62,18 @@ int main(int argc, char *argv[]){
 	// Constants
 	const long int FILESIZE = findSize(fsize); // it gets the size of the file content
 	const long int MAXSIZE = 500000;		   // the maximum size the file cannot surpass if it is to be printed to the console
-		
+
 	/* If no file to be opened is mentioned
 	** let the user know that no file was mentioned.
 	** Source code
 	** - https://stackoverflow.com/questions/9449295/opening-a-fp-from-command-line-arguments-in-c
-	*/ 
-	if (fp == NULL) {
+	*/
+	if (fp == NULL)
+	{
 		printf("No file to be open mentioned.\n");
-	} else {
+	}
+	else
+	{
 
 		if (FILESIZE == 0)
 		{
@@ -98,17 +103,17 @@ int main(int argc, char *argv[]){
 										   // 	-> https://www.tutorialspoint.com/print-contents-of-a-file-in-c
 		}
 
-		sha256(fp);							// run secure hash algorithm
+		sha256(fp); // run secure hash algorithm
 	}
 
-	fclose(fp);								// close the file
+	fclose(fp); // close the file
 
 	return 0;
 } // int main() method
 
 /* Find out how big the file is
 ** Source code:
-** -> https://www.geeksforgeeks.org/c-program-find-size-file/
+** 	-> https://www.geeksforgeeks.org/c-program-find-size-file/
 */
 long int findSize(FILE *fsize)
 {
@@ -122,14 +127,16 @@ long int findSize(FILE *fsize)
 	return res;
 }
 
-int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){ 
-	int numBytes;							// number of bytes -> between 0 - 64
+int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits)
+{
+	int numBytes; // number of bytes -> between 0 - 64
 
 	// All message blocks are finished
-	if (*S == FINISH){
+	if (*S == FINISH)
+	{
 		return 0;
 	}
-	
+
 	/* IF a block full of padding is needed 
 	** - then set first 56 bytes to 0 bits
 	** - set the last 64 bits to the no. of bits in the file (big endian)
@@ -139,129 +146,148 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){
 	** - PAD0 - first bit is 0
 	** - PAD1 - first bit is 1
 	*/
-	if (*S == PAD0 || *S == PAD1) {
-		for (int i = 0; i <= 64-9; i++)		// leaves 8 bytes at the end for the 64 bit integer
-			M -> e [i] = 0x00;				// padding the 448 bits with 0s
+	if (*S == PAD0 || *S == PAD1)
+	{
+		for (int i = 0; i <= 64 - 9; i++) // leaves 8 bytes at the end for the 64 bit integer
+			M->e[i] = 0x00;				  // padding the 448 bits with 0s
 
-
-		M -> s [7] = *numBits;  
-		M -> s [7] = ENDIAN_SWAP_UINT64(M -> s [7]);       
+		M->s[7] = *numBits;
+		M->s[7] = ENDIAN_SWAP_UINT64(M->s[7]);
 		*S = FINISH;
 
-		
 		if (*S == PAD1)
-			M -> e [0] = 0x80;  
+			M->e[0] = 0x80;
 
-		return 1;   
+		return 1;
 	} // if
 
-
-   	// The file hasn't finished reading (S is equal to READ)    
-	numBytes = fread(M -> e, 1, 64, fp);
-	*numBits += numBytes * 8;      
-
+	// The file hasn't finished reading (S is equal to READ)
+	numBytes = fread(M->e, 1, 64, fp);
+	*numBits += numBytes * 8;
 
 	// If less than 56 bytes is read then add padding
-	if (numBytes <= 64-9) {
+	if (numBytes <= 64 - 9)
+	{
 		// printf("Block with less than 55 bytes! \n");
-		// M.e [numBytes] = 0x01;			// first byte in M that hasn't been overriden
-											// -> right most position
-		M -> e [numBytes] = 0x80;			// first byte in M that hasn't been overriden
-											// -> left most position
-		
-		while (numBytes <= 64-9){
+		// M.e[numBytes] = 0x01;			// first byte in M that hasn't been overriden
+		// 	-> right most position
+		M->e[numBytes] = 0x80; // first byte in M that hasn't been overriden
+							   // 	-> left most position
+
+		while (numBytes <= 64 - 9)
+		{
 			numBytes += 1;
-			M -> e [numBytes] = 0x00;		// add k amount of 0s before appending
-		} // while
+			M->e[numBytes] = 0x00; // add k amount of 0s before appending
+		}						   // while
 
-		M -> s [7] = *numBits;				// append file size in bits (big endian) - 64 bit int
-		M -> s [7] = ENDIAN_SWAP_UINT64(M -> s [7]);       
-		*S = FINISH;						// Status == finished
+		M->s[7] = *numBits; // append file size in bits (big endian) - 64 bit int
+		M->s[7] = ENDIAN_SWAP_UINT64(M->s[7]);
+		*S = FINISH; // Status == finished
+	}
+	else if (numBytes < 64)
+	{						   // check if there's enough space for paddings
+		*S = PAD0;			   // it aknowledges a message block containing all 0s is needed
+		M->e[numBytes] = 0x80; // insert 1 bit in current block
 
-	} else if (numBytes < 64) {				// check if there's enough space for paddings
-		*S = PAD0;							// it aknowledges a message block containing all 0s is needed
-		M -> e [numBytes] = 0x80;			// insert 1 bit in current block
-
-		while (numBytes < 64) {				
+		while (numBytes < 64)
+		{
 			numBytes += 1;
-			M -> e [numBytes] = 0x00;		// padd the rest with 0s
-		} // while
-	} else if (feof(fp)) { 					// check if we're at the end of the file
-		*S = PAD1;							// another message block with padding is needed
-	} // if.. else if
-	return 1;								// the function is called again
-	
+			M->e[numBytes] = 0x00; // padd the rest with 0s
+		}						   // while
+	}
+	else if (feof(fp))
+	{			   // check if we're at the end of the file
+		*S = PAD1; // another message block with padding is needed
+	}			   // if.. else if
+	return 1;	  // the function is called again
+
 } // int nextMsgBlock() method
 
-void sha256(FILE *fp){
+void sha256(FILE *fp)
+{
 	// SHA Calculation variables
-	uint32_t W [64];						// Message schedule - 64 bit words
-	uint32_t a, b, c, d, e, f, g, h;		// Working variables
-	uint32_t T1, T2;						// Temporary variables 
-	
+	uint32_t W[W_SIZE];				 // Message schedule - 64 bit words
+	uint32_t a, b, c, d, e, f, g, h; // Working variables
+	uint32_t T1, T2;				 // Temporary variables
+
 	// Padding Calculation variables
-	union msgBlock M;						// current message block
-  	enum status S = READ;					// message blocks status
-  	int numBits = 0;					// number of bits read
+	union msgBlock M;	 // current message block
+	enum status S = READ; // message blocks status
+	int numBits = 0;	  // number of bits read
 
 	// Hash Value - Section 5.3.3
-	uint32_t H [8] = {
-		0x6a09e667, 	0xbb67ae85, 	0x3c6ef372, 	0xa54ff53a, 
-		0x510e527f, 	0x9b05688c, 	0x1f83d9ab, 	0x5be0cd19		
-	}; // H[8]
+	uint32_t H[H_SIZE] = {
+		0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+		0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19}; // H[8]
 
 	// Constant for the hash computation - Section 4.2.2
-	uint32_t K [64] = {
-		0x428a2f98, 	0x71374491, 	0xb5c0fbcf, 	0xe9b5dba5, 
-		0x3956c25b, 	0x59f111f1, 	0x923f82a4, 	0xab1c5ed5, 
-		0xd807aa98, 	0x12835b01, 	0x243185be, 	0x550c7dc3, 
-		0x72be5d74, 	0x80deb1fe, 	0x9bdc06a7, 	0xc19bf174, 
-		0xe49b69c1, 	0xefbe4786, 	0x0fc19dc6, 	0x240ca1cc, 
-		0x2de92c6f, 	0x4a7484aa, 	0x5cb0a9dc, 	0x76f988da, 
-		0x983e5152, 	0xa831c66d, 	0xb00327c8, 	0xbf597fc7, 
-		0xc6e00bf3, 	0xd5a79147, 	0x06ca6351, 	0x14292967, 
-		0x27b70a85, 	0x2e1b2138, 	0x4d2c6dfc, 	0x53380d13, 
-		0x650a7354, 	0x766a0abb, 	0x81c2c92e, 	0x92722c85,
-		0xa2bfe8a1, 	0xa81a664b, 	0xc24b8b70, 	0xc76c51a3, 
-		0xd192e819, 	0xd6990624, 	0xf40e3585, 	0x106aa070, 
-		0x19a4c116, 	0x1e376c08, 	0x2748774c, 	0x34b0bcb5, 
-		0x391c0cb3, 	0x4ed8aa4a, 	0x5b9cca4f, 	0x682e6ff3, 
-		0x748f82ee, 	0x78a5636f, 	0x84c87814, 	0x8cc70208, 
-		0x90befffa, 	0xa4506ceb, 	0xbef9a3f7, 	0xc67178f2
-	}; // K[]
+	uint32_t K[K_SIZE] = {
+		0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
+		0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+		0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
+		0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+		0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc,
+		0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+		0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7,
+		0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+		0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13,
+		0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+		0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3,
+		0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+		0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5,
+		0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+		0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
+		0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2}; // K[]
 
 	// Loop through message blocks as per page 22
-	while (nextMsgBlock(fp, &M, &S, &numBits)){
-		
-		// Hash Computation - Section 6.4.2
-		// Loops through the first 16 elements of W [] - Step 1 Page 24
-		for (int i = 0; i < 16; i++)
-			W  [i] = ENDIAN_SWAP_UINT32(M.t[i]);
+	while (nextMsgBlock(fp, &M, &S, &numBits))
+	{
 
-		// Loops through the next 48 elements of W [] - Step 1 Page 24
+		// Hash Computation - Section 6.4.2
+		// Loops through the first 16 elements of W[] - Step 1 Page 24
+		for (int i = 0; i < 16; i++)
+			W[i] = ENDIAN_SWAP_UINT32(M.t[i]);
+
+		// Loops through the next 48 elements of W[] - Step 1 Page 24
 		for (int i = 16; i < 64; i++)
-			W  [i] = SIG_1(W [i-2]) + W [i-7] + SIG_0(W [i-15]) + W [i-16];
-		
+			W[i] = SIG_1(W[i - 2]) + W[i - 7] + SIG_0(W[i - 15]) + W[i - 16];
 
 		// Initialize a, b, c, d, e - Step 2 Page 22
-		a = H [0]; b = H [1]; c = H [2]; d = H [3]; 
-		e = H [4]; f = H [5]; g = H [6]; h = H [7];
-		
+		a = H[0];
+		b = H[1];
+		c = H[2];
+		d = H[3];
+		e = H[4];
+		f = H[5];
+		g = H[6];
+		h = H[7];
+
 		// Step 3 - Page 23
-		for (int i = 0; i < 64; i++) {
-			T1 = h + EP1(e) + Ch(e, f, g) + K  [i] + W  [i];
+		for (int i = 0; i < 64; i++)
+		{
+			T1 = h + EP1(e) + Ch(e, f, g) + K[i] + W[i];
 			T2 = EP0(a) + Maj(a, b, c);
-			h = g; g = f; f = e;
+			h = g;
+			g = f;
+			f = e;
 			e = d + T1;
-			d = c; 	c = b; 	b = a;
+			d = c;
+			c = b;
+			b = a;
 			a = T1 + T2;
 		} // for
-		
+
 		// Step 4 - Page 23
-		H [0] += a;		H [1] += b;		H [2] += c;		H [3] += d;
-		H [4] += e;		H [5] += f;		H [6] += g;		H [7] += h;
+		H[0] += a;
+		H[1] += b;
+		H[2] += c;
+		H[3] += d;
+		H[4] += e;
+		H[5] += f;
+		H[6] += g;
+		H[7] += h;
 	} // while
-	
+
 	printf("\n\tHASH CONTENT: ");
 	printf("\n\t  1. Unrecognized: with spaces - Cannot be recognised as hash if you wish to check the output. \n\t\t-> ");
 	for (int i = 0; i < 8; i++)
