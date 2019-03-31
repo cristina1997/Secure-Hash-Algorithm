@@ -35,18 +35,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "headers/big-endians.h"
-
-/* ROTL_n(x) 
-** Shift n positions to the left 	
-** and 32-n positions to the right 
-*/
-#define rotl(a, b) (((a) << (b)) | ((a) >> (32 - (b))))
-
-/* ROTR_n(x) 
-** Shift n positions to the right
-** and 32-n positions to the left 
-*/
-#define rotr(a, b) (((a) >> (b)) | ((a) << (32 - (b))))
+#include "headers/rotate-def.h"
 
 #define Ch(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
 #define Maj(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
