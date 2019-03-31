@@ -40,6 +40,7 @@
 #include "headers/message-block.h"
 #include "headers/status.h"
 #include "headers/arr-sizes.h"
+#include "headers/temporary.h"
 
 /** 
 ***	Declaration of methods
@@ -206,9 +207,9 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits)
 void sha256(FILE *fp)
 {
 	// SHA Calculation variables
+	struct temp *ctxT;
 	uint32_t W[W_SIZE];				 // Message schedule - 64 bit words
 	uint32_t a, b, c, d, e, f, g, h; // Working variables
-	uint32_t T1, T2;				 // Temporary variables
 
 	// Padding Calculation variables
 	union msgBlock M;	 // current message block
@@ -265,16 +266,16 @@ void sha256(FILE *fp)
 		// Step 3 - Page 23
 		for (int i = 0; i < 64; i++)
 		{
-			T1 = h + EP1(e) + Ch(e, f, g) + K[i] + W[i];
-			T2 = EP0(a) + Maj(a, b, c);
+			ctxT->TEMP1 = h + EP1(e) + Ch(e, f, g) + K[i] + W[i];
+			ctxT->TEMP2 = EP0(a) + Maj(a, b, c);
 			h = g;
 			g = f;
 			f = e;
-			e = d + T1;
+			e = d + ctxT->TEMP1;
 			d = c;
 			c = b;
 			b = a;
-			a = T1 + T2;
+			a = ctxT->TEMP1 + ctxT->TEMP2;
 		} // for
 
 		// Step 4 - Page 23
