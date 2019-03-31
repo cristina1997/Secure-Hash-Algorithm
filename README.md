@@ -27,16 +27,16 @@ The original message starts with a length of **L** bits. A single 1 bit is added
 4. Process the message in successive 512-bit chunks: </br>
 &nbsp;&nbsp;&nbsp;&nbsp;Break the message into 512-bit blocks and for each blocks create a create 64 words - **W[64]** - of 32 bits each as follows:
       1. *first 16* - split M in 32 bit blocks
-      2. *remaining 48* - obtained with the formula found on the **[Archived NIST Technical Series Publication](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)** in **Section 6.2.2, Step 1**
+      2. *remaining 48* - obtained with the formula found on the **[Archived NIST Technical Series Publication](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)** in **Section 6.2.2, Part 1**
 
 5. Working variables: </br>
-Initialize the working variables to the current hash value as per **[Section 6.2.2, Step 2](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
+Initialize the working variables to the current hash value as per **[Section 6.2.2, Part 2](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
 
 6. Compression function: </br>
-Do 64 rounds consisting of the initializations in **[Section 6.2.2, Step 3](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
+Do 64 rounds consisting of the initializations in **[Section 6.2.2, Part 3](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
 
 7. Current hash value: </br>
-Add the compressed chunk to the current hash value as per **[Section 6.2.2, Step 4](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
+Add the compressed chunk to the current hash value as per **[Section 6.2.2, Part 4](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
 
 9. Produce the final hash value (big-endian): </br>
 Implement the cryptographic hash function just described by converting the little endians to big endians to allow bigger values to be outputted.
