@@ -88,7 +88,13 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits);
 
 int main(int argc, char *argv[]){ 
 
-	FILE *fp = fp  = fopen(argv [1], "r");		// reads a file 
+	FILE *fp = fp  = fopen(argv [1], "r");	// reads a file for computation
+	FILE *fprint = fopen(argv[1], "r"); // reads a file for printing to the console
+	FILE *fzise = fopen(argv[1], "r");  // reads a file to find out its size
+
+	// Char variable for the file contents
+	char fileContent; // variable to read contents of the file character by character
+
 		
 	/* If no file to be opened is mentioned
 	** let the user know that no file was mentioned.
@@ -98,6 +104,12 @@ int main(int argc, char *argv[]){
 	if (fp == NULL)
 		printf("No file to be open mentioned.\n");
 	else 
+
+		printf("\n\tFILE CONTENT: \n\t\t-> ");
+		while ((fileContent = fgetc(fprint)) != EOF)
+			printf("%c", fileContent); // Printing file contents to the console:
+										// Source code
+										// 	-> https://www.tutorialspoint.com/print-contents-of-a-file-in-c
 		sha256(fp);							// run secure hash algorithm
 
 	fclose(fp);								// close the file
