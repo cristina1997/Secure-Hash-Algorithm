@@ -5,10 +5,11 @@
 #include <stdint.h>
 
 // it convers numbers from hexadecimal values to binary values
-void binprint(uint_32_t x){
-	uint_32_t one = 1;
+void binprint(uint32_t x){
+	uint32_t one = 1;
+	int i;
 	
-	for (int i = 0; i < 32; i++)
+	for (i = 0; i < 32; i++) {
 		if ((one << (31 - i)) & x)
 			printf("1");
 		else
@@ -20,21 +21,21 @@ void binprint(uint_32_t x){
 // ROTL_n(x) 
 //	-> shift n positions to the left 
 //	-> and 32-n positions to the right
-uint_32_t rotl(uint_32_t x, int n){
+uint32_t rotl(uint32_t x, int n){
 	return ((x << n) | (x >> (32 - n)));
 }
 
 // ROTR_n(x) 
 //	-> shift n positions to the right 
 //	-> and 32-n positions to the left
-uint_32_t rotr(uint_32_t x, int n){
+uint32_t rotr(uint32_t x, int n){
 	return ((x >> n) | (x << (32 - n)));
 }
 
 int main (int argc, char *argv[]){
 
-	uint_32_t a = 1;
-	uint_32_t b = 2;
+	uint32_t a = 1;
+	uint32_t b = 2;
 	
 	// Values printed as hexadecimal numbers
 	printf(" a: %08x\n", a); 		// value of a as hexadecimal numbers
@@ -59,7 +60,7 @@ int main (int argc, char *argv[]){
 	printf("\n <<: "); binprint(a<<1);	// shifts a 1 position to the left
 	printf("\n >>: "); binprint(a>>1);	// shifts a 1 position to the right
 	
-	return 0	
+	return 0;
 }
 
 
