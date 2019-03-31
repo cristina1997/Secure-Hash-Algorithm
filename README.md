@@ -19,20 +19,27 @@ Key properties:
 
 1. Initialize hash values:
 The first step is to initialize the first 32 bits of the fractional part - **H[8]** - into 8 variables or primes of 4 bits each.
+
 2. Initialize array of round constants:
 The 2nd step is to initialize the 64 binary words - **K[64]** - into characterised by the first 32 bits of the fractional parts of the cube roots of the first 64 prime numbers. In other words, the cube roots of the first 64 prime numbers is found as well as the fractional parts of those values. From those fractional parts, the first 32 bits are used for the 64 binary words.
+
 3. Pre-processing (Padding):
 The original message starts with a length of **L** bits. A single 1 bit is added at the end followed by a **K** number of *'0'* bits in which K is the *smallest positive integer* such that **L + 1 + K = 448 mod 512**. Finally, add **L** at the end of the message, the original bits with which we started, represented by exactly 64 bits.
+
 4. Process the message in successive 512-bit chunks:
 Break the message into 512-bit blocks and for each blocks create a create 64 words - **W[64]** - of 32 bits each as follows:
-* first 16 - split M in 32 bit blocks
-* remaining 48 - obtained with the formula found on the [Archived NIST Technical Series Publication](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977) in Section 6.2.2, Step 1
-6. Working variables:
-Initialize the working variables to the current hash value as per [Section 6.2.2, Step 2](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)
-7. Compression function:
-Do 64 rounds consisting of the initializations in [Section 6.2.2, Step 3](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)
-8. Current hash value:
-Add the compressed chunk to the current hash value as per [Section 6.2.2, Step 4](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)
+* ***first 16*** - split M in 32 bit blocks
+* ***remaining 48*** - obtained with the formula found on the [Archived NIST Technical Series Publication](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977) in **Section 6.2.2, Step 1**
+
+5. Working variables:
+Initialize the working variables to the current hash value as per **[Section 6.2.2, Step 2](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
+
+6. Compression function:
+Do 64 rounds consisting of the initializations in **[Section 6.2.2, Step 3](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
+
+7. Current hash value:
+Add the compressed chunk to the current hash value as per **[Section 6.2.2, Step 4](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
+
 9. Produce the final hash value (big-endian):
 Implement the cryptographic hash function just described by converting the little endians to big endians to allow bigger values to be outputted.
 
