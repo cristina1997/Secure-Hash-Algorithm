@@ -36,13 +36,7 @@
 #include <stddef.h>
 #include "headers/big-endians.h"
 #include "headers/rotate-def.h"
-
-#define Ch(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
-#define Maj(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
-#define EP0(x) (rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22))
-#define EP1(x) (rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25))
-#define SIG_0(x) (rotr(x, 7) ^ rotr(x, 18) ^ ((x) >> 3))
-#define SIG_1(x) (rotr(x, 17) ^ rotr(x, 19) ^ ((x) >> 10))
+#include "headers/sha256-methods.h"
 
 
 /* Union
