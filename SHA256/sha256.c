@@ -23,7 +23,7 @@
 **		* Test vectors for SHA-1, SHA-2 and SHA-3:
 **			https://www.di-mgt.com.au/sha_testvectors.html
 ** 		* Files:
-**			https://www.online-convert.com/result/2442f21e-b1ec-49b9-b258-fe0165942a6d
+**			https://hash.online-convert.com/sha256-generator
 **		* Strings:
 **			https://www.xorbin.com/tools/sha256-hash-calculator
 **		* Tests if SHA Algorithm outputs the file contsnt
@@ -47,7 +47,7 @@
 // SHA computation
 void sha256(FILE *fp);
 long int findSize(FILE *fsize);
-int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits);
+int paddinngMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits);
 
 int main(int argc, char *argv[])
 {
@@ -127,7 +127,7 @@ long int findSize(FILE *fsize)
 	return res;
 }
 
-int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits)
+int paddinngMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits)
 {
 	int numBytes; // number of bytes -> between 0 - 64
 
@@ -201,7 +201,7 @@ int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits)
 	}			   // if.. else if
 	return 1;	  // the function is called again
 
-} // int nextMsgBlock() method
+} // int paddinngMsgBlock() method
 
 void sha256(FILE *fp)
 {
@@ -240,7 +240,7 @@ void sha256(FILE *fp)
 		0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2}; // K[]
 
 	// Loop through message blocks as per page 22
-	while (nextMsgBlock(fp, &M, &S, &numBits))
+	while (paddinngMsgBlock(fp, &M, &S, &numBits))
 	{
 
 		// Hash Computation - Section 6.4.2
