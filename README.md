@@ -78,5 +78,5 @@ First and foremost, you will need to install [the GCC Compiler](http://www.codeb
 
 ***
 
-## Output for the provided files
+## Output for the provided text files
 ![alt text](https://github.com/cristina1997/Secure-Hash-Algorithm/blob/master/SHA256/images/sha256-outputs.PNG)
