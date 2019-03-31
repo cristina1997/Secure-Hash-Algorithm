@@ -19,6 +19,15 @@
 ** 		* https://www.planetebook.com/free-ebooks/gullivers-travels.pdf
 ** - PDF to TEXT Converter:
 ** 		* https://pdftotext.com
+** - Test SHA Algorithm:
+**		* Test vectors for SHA-1, SHA-2 and SHA-3:
+**			https://www.di-mgt.com.au/sha_testvectors.html
+** 		* Files:
+**			https://www.online-convert.com/result/2442f21e-b1ec-49b9-b258-fe0165942a6d
+**		* Strings:
+**			https://www.xorbin.com/tools/sha256-hash-calculator
+**		* Tests if SHA Algorithm outputs the file contsnt
+**			https://crackstation.net
 ** - Macro Definitions:
 ** 		* https://github.com/B-Con/crypto-algorithms/blob/master/sha256.c
 */
@@ -284,9 +293,14 @@ void sha256(FILE *fp)
 		H[7] += h;
 	} // while
 
-	printf("\n\tHASH CONTENT: \n\t\t-> ");
+	printf("\n\tHASH CONTENT: ");
+	printf("\n\t  1. Unrecognized: with spaces - Cannot be recognised as hash if you wish to check the output. \n\t\t-> ");
 	for (int i = 0; i < 8; i++)
 		printf("%x ", H[i]);
+
+	printf("\n\t  2. Recognized: without spaces - Can be recognised as hash if you wish to check the output.\n\t\t-> ");
+	for (int i = 0; i < 8; i++)
+		printf("%x", H[i]);
 
 	printf("\n\n");
 } // void sha256() method
