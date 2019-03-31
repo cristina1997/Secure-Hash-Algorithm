@@ -1,7 +1,7 @@
 # Secure Hash Algorithm V2
 
 This is a program that calculates the Secure Hash Algorithm Version 2 (SHA-256 to be specific) of a text file input. 
-The users can use the already provided test files from the "**test**" folder or use a text file of their own by copying it onto the "**test**" folder. </br>
+The users can use the already provided test files from the "**test**" folder or use a text file of their own by copying it onto the "**test**" folder. </br></br>
 The program outputs the content from the file as long as the file is not empty - as there is nothing to output - and doesn't have a size bigger than 5 MB. If a file too big is outputted then the Secure Hash Algorithm will end up running slower than intended.
 
 ***
