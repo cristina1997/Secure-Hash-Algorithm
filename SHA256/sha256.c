@@ -84,26 +84,30 @@ enum status {
 **/
 // SHA computation
 void sha256(FILE *fp);
+long int findSize(FILE *fsize);
 int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits);
 
 int main(int argc, char *argv[]){ 
 
 	FILE *fp = fp  = fopen(argv [1], "r");	// reads a file for computation
 	FILE *fprint = fopen(argv[1], "r"); // reads a file for printing to the console
-	FILE *fzise = fopen(argv[1], "r");  // reads a file to find out its size
+	FILE *fsize = fopen(argv[1], "r");  // reads a file to find out its size
 
 	// Char variable for the file contents
 	char fileContent; // variable to read contents of the file character by character
 
+	// Constants
+	const long int FILESIZE = findSize(fsize); // it gets the size of the file content
+	const long int MAXSIZE = 500000;		   // the maximum size the file cannot surpass if it is to be printed to the console
 		
 	/* If no file to be opened is mentioned
 	** let the user know that no file was mentioned.
 	** Source code
 	** - https://stackoverflow.com/questions/9449295/opening-a-fp-from-command-line-arguments-in-c
-	*/
-	if (fp == NULL)
+	*/ 
+	if (fp == NULL) {
 		printf("No file to be open mentioned.\n");
-	else 
+	} else {
 
 		printf("\n\tFILE CONTENT: \n\t\t-> ");
 		while ((fileContent = fgetc(fprint)) != EOF)
@@ -111,11 +115,28 @@ int main(int argc, char *argv[]){
 										// Source code
 										// 	-> https://www.tutorialspoint.com/print-contents-of-a-file-in-c
 		sha256(fp);							// run secure hash algorithm
+	}
 
 	fclose(fp);								// close the file
 
 	return 0;
 } // int main() method
+
+/* Find out how big the file is
+** Source code:
+** -> https://www.geeksforgeeks.org/c-program-find-size-file/
+*/
+long int findSize(FILE *fsize)
+{
+
+	fseek(fsize, 0L, SEEK_END); // find the end of the file
+
+	long int res = ftell(fsize); // calculating the size of the file
+
+	fclose(fsize); // closing the file
+
+	return res;
+}
 
 int nextMsgBlock(FILE *fp, union msgBlock *M, enum status *S, int *numBits){ 
 	int numBytes;							// number of bytes -> between 0 - 64
