@@ -19,6 +19,7 @@
 **
 ** SOURCE CODE: 
 **  -> http://www.firmcodes.com/write-c-program-convert-little-endian-big-endian-integer/
+**  -> https://codereview.stackexchange.com/questions/151049/endianness-conversion-in-c
 */
 #define ENDIAN_SWAP_UINT32(x)  ( \
 	(((x) & 0xff000000) >> 24) | \
