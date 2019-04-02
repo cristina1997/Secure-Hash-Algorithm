@@ -16,7 +16,7 @@ Key properties:
 
 ## [Steps](https://en.wikipedia.org/wiki/SHA-2)
 1. Initialize hash values: </br>
-The first step is to initialize the first 32 bits of the fractional part - **H[8]** - into 8 variables or primes of 4 bits each.
+The first step is to initialize the first 32 bits of the fractional part of the first 8 primes - **H[8]** - into 8 variables of 4 bits each.
 
 2. Initialize array of round constants: </br>
 The 2nd step is to initialize the 64 binary words - **K[64]** - into characterised by the first 32 bits of the fractional parts of the cube roots of the first 64 prime numbers. In other words, the cube roots of the first 64 prime numbers is found as well as the fractional parts of those values. From those fractional parts, the first 32 bits are used for the 64 binary words.
