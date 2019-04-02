@@ -30,7 +30,7 @@ The original message starts with a length of **L** bits. A single 1 bit is added
       2. *remaining 48* - obtained with the formula found on the **Archived NIST Technical Series Publication** in **[Section 6.2.2, Part 1](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
 
 5. Working variables: </br>
-Initialize the working variables to the current hash value as per **[Section 6.2.2, Part 2](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
+Initialize the w-bit words used in the computation of the hash values to the current hash value as per **[Section 6.2.2, Part 2](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
 
 6. Compression function: </br>
 Do 64 rounds consisting of the initializations in **[Section 6.2.2, Part 3](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=910977)**
