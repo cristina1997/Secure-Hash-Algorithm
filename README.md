@@ -49,7 +49,7 @@ First and foremost, you will need to install [the GCC Compiler](http://www.codeb
 1. **Clone Repo**
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Open your terminal/cmd in the folder you wish to download the repository and execute the following </br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```> git clone https://github.com/cristina1997/ElizaChatbot```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```> git clone https://github.com/cristina1997/Secure-Hash-Algorithm```
 
 2. **Command Prompt**
 
